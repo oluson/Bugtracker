@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Bugtracker.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,8 +9,10 @@ namespace Bugtracker.Controllers
 {
     public class HomeController : Controller
     {
+       // private UserRolesHelper Urh = new UserRolesHelper(new ApplicationDbContext);
         public ActionResult Index()
         {
+        
             return View();
         }
 
