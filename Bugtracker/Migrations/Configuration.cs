@@ -1,5 +1,8 @@
 namespace Bugtracker.Migrations
 {
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -10,23 +13,75 @@ namespace Bugtracker.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-            ContextKey = "Bugtracker.Models.ApplicationDbContext";
         }
 
         protected override void Seed(Bugtracker.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            {
+                var roleManager = new RoleManager<IdentityRole>(
+                new RoleStore<IdentityRole>(context));
+                if (!context.Roles.Any(r => r.Name == "Admin"))
+                {
+                    roleManager.Create(new IdentityRole { Name = "Admin" });
+                }
+                var userManager = new UserManager<ApplicationUser>(
+                    new UserStore<ApplicationUser>(context));
+                if (!context.Users.Any(u => u.Email == "oosajere@gmail.com"))
+                {
+                    userManager.Create(new ApplicationUser
+                    {
+                        UserName = "oosajere@gmail.com",
+                        Email = "oosajere@gmail.com",
+                        FirstName = "Olu",
+                        LastName = "Osajere",
+                        DisplayName = "oosajere@gmail.com"
+                    }, "Wilson#123");
+                    var userId = userManager.FindByEmail("oosajere@gmail.com").Id;
+                    userManager.AddToRole(userId, "Admin");
+                }
+                if (!context.Roles.Any(r => r.Name == "Project Manager"))
+                {
+                    roleManager.Create(new IdentityRole { Name = "Project Manager" });
+                }
+                if (!context.Users.Any(u => u.Email == "projectmanager@dispostable.com"))
+                {
+                    userManager.Create(new ApplicationUser
+                    {
+                        UserName = "ProjectManager",
+                        Email = "projectmanager@dispostable.com",
+                        FirstName = "Project",
+                        LastName = "Manager",
+                        DisplayName = "Project Manager"
+                    }, "PM-password1");
+                    var userId = userManager.FindByEmail("projectmanager@dispostable.com").Id;
+                    userManager.AddToRole(userId, "Project Manager");
+                }
+                if (!context.Roles.Any(r => r.Name == "Developer"))
+                {
+                    roleManager.Create(new IdentityRole { Name = "Developer" });
+                }
+                if (!context.Users.Any(u => u.Email == "developer@dispostable.com"))
+                {
+                    userManager.Create(new ApplicationUser
+                    {
+                        UserName = "Developer",
+                        Email = "developer@dispostable.com",
+                        FirstName = "Project",
+                        LastName = "Developer",
+                        DisplayName = "Developer"
+                    }, "DEV-password1");
+                    var userId = userManager.FindByEmail("developer@dispostable.com").Id;
+                    userManager.AddToRole(userId, "Developer");
+                }
+                if (!context.Roles.Any(r => r.Name == "Submitter"))
+                {
+                    roleManager.Create(new IdentityRole { Name = "Submitter" });
+                }
+            }
         }
     }
 }
+
+

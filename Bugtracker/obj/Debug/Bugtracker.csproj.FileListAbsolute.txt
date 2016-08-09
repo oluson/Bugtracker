@@ -77,6 +77,13 @@ c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\M
 c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.Google.xml
 c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.Twitter.xml
 c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.csprojResolveAssemblyReference.cache
 c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.dll
 c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.pdb
+c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\SendGrid.dll
+c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\SendGrid.SmtpApi.dll
+c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\SendGridMail.dll
+c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\System.Net.Http.Formatting.dll
+c:\users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\System.Net.Http.Formatting.xml
+C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.Migrations.Initial.resources
+C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.csproj.GenerateResource.Cache
+C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.csprojResolveAssemblyReference.cache

@@ -16,9 +16,11 @@ namespace Bugtracker.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult About(string uid, string role)
         {
-            ViewBag.Message = "Your application description page.";
+            UserRolesHelper helper = new UserRolesHelper();
+            helper.AddUserToRole(uid, role);
+
 
             return View();
         }

@@ -10,9 +10,15 @@ namespace Bugtracker.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string Name { get; set; }
+        public string DisplayName { get; set; }
+
         public ApplicationUser()
-        {
-            Tickets = new HashSet<Tickets>();
+        { 
+            //Tickets = new HashSet<Tickets>();
             Project = new HashSet<Projects>();
             TicketAttachment = new HashSet<TicketAttachments>();
             TicketComment = new HashSet<TicketComments>();
@@ -22,19 +28,19 @@ namespace Bugtracker.Models
 
 
 
-        public virtual ICollection<Tickets> Tickets { get; set; }
+        //public virtual ICollection<Tickets> Tickets { get; set; }
         public virtual ICollection<TicketAttachments> TicketAttachment { get; set; }
         public virtual ICollection<TicketHistories> TicketHistory { get; set; }
         public virtual ICollection<TicketComments> TicketComment { get; set; }
         public virtual ICollection<Projects> Project { get; set; }
         public virtual ICollection<TicketNotification> TicketNotification { get; set; }
+        //public string FirstName { get; internal set; }
+        //public string LastName { get; internal set; }
 
-        public virtual TicketPriorities TicketPriority { get; set; }
-        public virtual TicketStatuses TicketStatus { get; set; }
-        public virtual TicketTypes TicketType { get; set; }
-        
-       
-        public virtual ApplicationUser OwnerUser { get; set; }
+        //public virtual TicketPriorities TicketPriority { get; set; }
+        //public virtual TicketStatuses TicketStatus { get; set; }
+        //public virtual TicketTypes TicketType { get; set; }
+        //public virtual ApplicationUser OwnerUser { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -63,6 +69,8 @@ namespace Bugtracker.Models
         public virtual DbSet<TicketComments> TicketComment { get; set; }
         public virtual DbSet<Projects> Project { get; set; }
         public virtual DbSet<TicketNotification> TicketNotification { get; set; }
-
+        public virtual DbSet<TicketPriorities> TicketPriority { get; set; }
+        public virtual DbSet<TicketStatuses> TicketStatus { get; set; }
+        public virtual DbSet<TicketTypes> TicketType { get; set; }
     }
 }

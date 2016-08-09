@@ -14,7 +14,7 @@ namespace Bugtracker.Models
            
         }
         public int Id { get; set; }
-        public int TicketId { get; set; }
+       
         public string Name { get; set; }
 
 

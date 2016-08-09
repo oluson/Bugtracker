@@ -49,12 +49,12 @@ namespace Bugtracker.Models
         public virtual ICollection<TicketHistories> TicketHistory { get; set; }
         public virtual ICollection<TicketComments> TicketComment { get; set; }
         public virtual ICollection<TicketNotification> TicketNotification { get; set; }
-        public virtual ICollection<TicketPriorities> TicketPriority { get; set; }
 
+        public virtual TicketPriorities TicketPriority { get; set; }
         public virtual Projects Project { get; set; }
         public virtual TicketStatuses TicketStatus { get; set; }
         public virtual TicketTypes TicketType { get; set; }       
         public virtual ApplicationUser OwnerUser { get; set; }
-
+        
     }
 }
