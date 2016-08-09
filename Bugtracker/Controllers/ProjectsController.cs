@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Bugtracker.Models;
 
 namespace Bugtracker.Controllers
-{
+{   [Authorize] // Only Authenticated Users get access.
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
