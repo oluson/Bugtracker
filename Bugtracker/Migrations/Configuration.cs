@@ -49,12 +49,12 @@ namespace Bugtracker.Migrations
                 {
                     userManager.Create(new ApplicationUser
                     {
-                        UserName = "ProjectManager",
+                        UserName = "projectmanager@dispostable.com",
                         Email = "projectmanager@dispostable.com",
                         FirstName = "Project",
                         LastName = "Manager",
                         DisplayName = "Project Manager"
-                    }, "PM-password1");
+                    }, "Pmanager#1");
                     var userId = userManager.FindByEmail("projectmanager@dispostable.com").Id;
                     userManager.AddToRole(userId, "Project Manager");
                 }
@@ -66,12 +66,12 @@ namespace Bugtracker.Migrations
                 {
                     userManager.Create(new ApplicationUser
                     {
-                        UserName = "Developer",
+                        UserName = "developer@dispostable.com",
                         Email = "developer@dispostable.com",
                         FirstName = "Project",
                         LastName = "Developer",
                         DisplayName = "Developer"
-                    }, "DEV-password1");
+                    }, "Developer#1");
                     var userId = userManager.FindByEmail("developer@dispostable.com").Id;
                     userManager.AddToRole(userId, "Developer");
                 }

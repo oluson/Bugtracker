@@ -55,6 +55,7 @@ namespace Bugtracker.Models
         public virtual TicketStatuses TicketStatus { get; set; }
         public virtual TicketTypes TicketType { get; set; }       
         public virtual ApplicationUser OwnerUser { get; set; }
-        
+        public virtual ApplicationUser AssignedToUser { get; set; }
+
     }
 }

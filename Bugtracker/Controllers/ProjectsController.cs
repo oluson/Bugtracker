@@ -9,16 +9,23 @@ using System.Web.Mvc;
 using Bugtracker.Models;
 
 namespace Bugtracker.Controllers
-{   [Authorize] // Only Authenticated Users get access.
+{               // Only Authenticated Users get access.
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Projects
-       // [Authorize (Roles ="Admin")]
+        [Authorize (Roles ="Admin, Developer, Project Manager")]
         public ActionResult Index()
         {
             return View(db.Project.ToList());
+        }
+
+
+        public ActionResult Admin()
+        {
+            // return View();
+            return RedirectToAction("UserRoleAdmin");
         }
 
         // GET: Projects/Details/5
@@ -131,7 +138,7 @@ namespace Bugtracker.Controllers
 
 
 
-        public ActionResult Users()
+        public ActionResult UserRoleAdmin()
         {
             var users = db.Users.ToList().OrderBy(u => u.LastName);
             return View(users);
@@ -168,7 +175,7 @@ namespace Bugtracker.Controllers
                     helper.RemoveUserFromRole(id, role);
                 }
             }
-            return RedirectToAction("Index", "Users", model);
+            return RedirectToAction("UserRoleAdmin");
         }
     }
 
