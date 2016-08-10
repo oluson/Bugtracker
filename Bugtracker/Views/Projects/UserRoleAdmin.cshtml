@@ -6,10 +6,12 @@
 
     @foreach (var user in Model)
     {
-        <li> @Html.ActionLink("edit", "EditUseRoles", new { id=user.Id})
+        @*<li> @Html.ActionLink("Add", "AddUsersToRoles", new { id = user.Id })
+            @user.UserName</li>*@
+        <li> @Html.ActionLink("Edit", "EditUserRoles", new { id=user.Id})
             @user.UserName
     </li>
     }
 
 
-</ul>
+</ul>0

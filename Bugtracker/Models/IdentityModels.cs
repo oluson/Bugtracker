@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Collections;
 
 namespace Bugtracker.Models
 {
@@ -13,8 +14,7 @@ namespace Bugtracker.Models
         public string FirstName { get; set; }
             
         public string LastName { get; set; }
-
-       
+   
         public string DisplayName { get; set; }
 
         public ApplicationUser()
@@ -68,7 +68,6 @@ namespace Bugtracker.Models
         public virtual DbSet<TicketPriorities> TicketPriority { get; set; }
         public virtual DbSet<TicketStatuses> TicketStatus { get; set; }
         public virtual DbSet<TicketTypes> TicketType { get; set; }
-
-        
+        public IEnumerable ApplicationUsers { get; internal set; }
     }
 }

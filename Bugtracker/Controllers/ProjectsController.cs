@@ -136,7 +136,7 @@ namespace Bugtracker.Controllers
         }
 
 
-
+        //UserRoleAdmin
 
         public ActionResult UserRoleAdmin()
         {
@@ -178,7 +178,6 @@ namespace Bugtracker.Controllers
             return RedirectToAction("UserRoleAdmin");
         }
     }
-
 }
 
 
