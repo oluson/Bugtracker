@@ -18,8 +18,8 @@ namespace Bugtracker.Controllers
 
         public ActionResult About(string uid, string role)
         {
-            UserRolesHelper helper = new UserRolesHelper();
-            helper.AddUserToRole(uid, role);
+            //UserRolesHelper helper = new UserRolesHelper();
+            //helper.AddUserToRole(uid, role);
 
 
             return View();

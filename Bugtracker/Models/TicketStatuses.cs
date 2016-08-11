@@ -13,7 +13,7 @@ namespace Bugtracker.Models
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<Tickets> Ticket { get; set; }
+       public virtual ICollection<Tickets> Ticket { get; set; }
 
 
     }

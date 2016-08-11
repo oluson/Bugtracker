@@ -97,6 +97,74 @@ namespace Bugtracker.Migrations
                 {
                     roleManager.Create(new IdentityRole { Name = "Submitter" });
                 }
+                //TicketPriority Seeding Method
+                if (!context.TicketPriority.Any(t => t.Name == "Low"))
+                {
+                    var ticketPriorityLow = new TicketPriorities();
+                    ticketPriorityLow.Name = "Low";
+                    context.TicketPriority.Add(ticketPriorityLow);
+                }
+                if (!context.TicketPriority.Any(t => t.Name == "Medium"))
+                {
+                    var ticketPriorityMedium = new TicketPriorities();
+                    ticketPriorityMedium.Name = "Medium";
+                    context.TicketPriority.Add(ticketPriorityMedium);
+                }
+                if (!context.TicketPriority.Any(t => t.Name == "High"))
+                {
+                    var ticketPriorityHigh = new TicketPriorities();
+                    ticketPriorityHigh.Name = "High";
+                    context.TicketPriority.Add(ticketPriorityHigh);
+                }
+
+               // TicketTypes Seeding Method
+                if (!context.TicketType.Any(t => t.Name == "General Issue"))
+                {
+                    var ticketTypeGeneralIssue = new TicketTypes();
+                    ticketTypeGeneralIssue.Name = "General Issue";
+                    context.TicketType.Add(ticketTypeGeneralIssue);
+                }
+                if (!context.TicketType.Any(t => t.Name == "Feature Issue"))
+                {
+                    var ticketTypeFeatureIssue = new TicketTypes();
+                    ticketTypeFeatureIssue.Name = "Feature Issue";
+                    context.TicketType.Add(ticketTypeFeatureIssue);
+                }
+                if (!context.TicketType.Any(t => t.Name == "Client Issue"))
+                {
+                    var ticketTypeClientIssue = new TicketTypes();
+                    ticketTypeClientIssue.Name = "Client Issue";
+                    context.TicketType.Add(ticketTypeClientIssue);
+                }
+                if (!context.TicketType.Any(t => t.Name == "Others"))
+                {
+                    var ticketTypeOthers = new TicketTypes();
+                    ticketTypeOthers.Name = "Others";
+                    context.TicketType.Add(ticketTypeOthers);
+                }
+
+                //TicketStatus Seeding Method
+
+                if (!context.TicketStatus.Any(t => t.Name == "Unassigned"))
+                {
+                    var ticketStatusUnassigned = new TicketStatuses();
+                    ticketStatusUnassigned.Name = "Unassigned";
+                    context.TicketStatus.Add(ticketStatusUnassigned);
+                }
+
+                if (!context.TicketStatus.Any(t => t.Name == "Active/Assigned"))
+                {
+                    var ticketStatusActiveAssigned = new TicketStatuses();
+                    ticketStatusActiveAssigned.Name = "Active/Assigned";
+                    context.TicketStatus.Add(ticketStatusActiveAssigned);
+                }
+
+                if (!context.TicketStatus.Any(t => t.Name == "Resolved"))
+                {
+                    var ticketStatusResolved = new TicketStatuses();
+                    ticketStatusResolved.Name = "Resolved";
+                    context.TicketStatus.Add(ticketStatusResolved);
+                }
             }
         }
     }
