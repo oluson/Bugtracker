@@ -39,6 +39,10 @@ namespace Bugtracker.Controllers
         // GET: Tickets/Create
         public ActionResult Create()
         {
+
+            var role = db.Roles.FirstOrDefault(r => r.Name == "Developer");
+            var Users = db.Users.Where(u => u.Roles.Any(r => r.RoleId == role.Id));
+
             ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName");
             ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName");
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name");

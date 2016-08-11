@@ -24,8 +24,6 @@ namespace Bugtracker.Controllers
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
-            ViewBag.Message = "";
-
             return View();
         }
 
@@ -175,11 +173,11 @@ namespace Bugtracker.Controllers
             if (userManager.IsInRole(user.Id, RoleName))
             {
                 userManager.RemoveFromRole(user.Id, RoleName);
-                ViewBag.Message = "Role removed from this user successfully !";
+                ViewBag.Message = "User has been succesfully removed from this role !";
             }
             else
             {
-                ViewBag.Message = "This user doesn't belong to selected role.";
+                ViewBag.Message = "This user is currently not assigned to the selected role.";
             }
 
             // Repopulate Dropdown Lists
