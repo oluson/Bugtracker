@@ -14,7 +14,7 @@ namespace Bugtracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         ProjectRolesHelper pRA = new ProjectRolesHelper();
 
-        [Authorize (Roles ="Admin")]
+        [Authorize (Roles ="Admin,Project Manager")]
         public ActionResult Index()
         {
             // Populate Dropdown Lists
@@ -216,7 +216,7 @@ namespace Bugtracker.Controllers
         //  Adding users to Projects
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult UserAddToProject(string UserName, string ProjectId)
+        public ActionResult ProjectAssignment(string UserName, string ProjectId)
         {
             var context = new Models.ApplicationDbContext();
 
@@ -236,7 +236,7 @@ namespace Bugtracker.Controllers
 
             // Repopulate Dropdown Lists
             var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Projects = Projectslist;
             var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();

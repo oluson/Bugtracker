@@ -21,6 +21,7 @@ namespace Bugtracker.Models
         {
             ApplicationUser users = db.Users.Find(userId);
             return users.Project.ToList();
+
         }
         public void AddUserToProject(string userId, string ProjectId)
         {
