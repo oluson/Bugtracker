@@ -11,50 +11,45 @@ namespace Bugtracker.Models
     {
         private UserManager<ApplicationUser> manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
         private ApplicationDbContext db = new ApplicationDbContext();
-        public bool IsUserInRole(string userId, string ProjectName)
+        public bool IsUserOnProject(string userId, int ProjectId)
         {
-            return manager.IsInRole(userId, ProjectName);
+            var project = db.Project.Find(ProjectId);
+            var projectUser = project.ProjectUsers.Any(u => u.Id.Equals(userId));
+            return projectUser;
         }
-        public ICollection<string> ListUserRoles(string userId)
+        public List<Projects> ListUserProjects(string userId)
         {
-            return manager.GetRoles(userId);
+            ApplicationUser users = db.Users.Find(userId);
+            return users.Project.ToList();
         }
-        public bool AddUserToRole(string userId, string ProjectName)
+        public void AddUserToProject(string userId, string ProjectId)
         {
-            var result = manager.AddToRole(userId, ProjectName);
-            return result.Succeeded;
+            ApplicationUser users = db.Users.Find(userId);
+            Projects project = db.Project.Find(ProjectId);
+            project.ProjectUsers.Add(users);
+            db.SaveChanges();
         }
-        public bool AddUserToRoles(string userId, string[] ProjectName)
+        //public bool AddUserToRoles(string userId, string[] ProjectId)
+        //{
+        //    var result = manager.AddToRoles(userId, ProjectId);
+        //    return result.Succeeded;
+        public void RemoveUserFromProject(string userId, string ProjectId)
         {
-            var result = manager.AddToRoles(userId, ProjectName);
-            return result.Succeeded;
+            ApplicationUser users = db.Users.Find(userId);
+            Projects project = db.Project.Find(ProjectId);
+            project.ProjectUsers.Remove(users);
+            db.SaveChanges();
         }
-        public bool RemoveUserFromRole(string userId, string ProjectName)
+        public List<ApplicationUser> ListProjectUsers(int ProjectId)
         {
-            var result = manager.RemoveFromRole(userId, ProjectName);
-            return result.Succeeded;
+            Projects project = db.Project.Find(ProjectId);
+            return project.ProjectUsers.ToList();
         }
-        public ICollection<ApplicationUser> UsersInRole(string ProjectName)
+        public List<ApplicationUser> UsersNotInProject(int ProjectId)
         {
-            var resultList = new List<ApplicationUser>();
-            var List = manager.Users.ToList();
-            foreach (var user in List)
-            {
-                if (IsUserInRole(user.Id, ProjectName))
-                    resultList.Add(user);
-            }
-            return resultList;
-        }
-        public ICollection<ApplicationUser> UsersNotInRole(string ProjectName)
-        {
-            var resultList = new List<ApplicationUser>();
-            var List = manager.Users.ToList();
-            foreach (var user in List)
-            {
-                if (!IsUserInRole(user.Id, ProjectName))
-                    resultList.Add(user);
-            }
-            return resultList;
+            Projects projects = db.Project.Find(ProjectId);
+            var projUsers = projects.ProjectUsers;
+            return projects.ProjectUsers.Where(u => !projUsers.Contains(u)).ToList();
         }
     }
 }
