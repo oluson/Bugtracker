@@ -10,7 +10,11 @@ using Microsoft.AspNet.Identity;
 namespace Bugtracker.Controllers
 {
     public class RolesController : Controller
-    {   [Authorize (Roles ="Admin")]
+    {
+        private ApplicationDbContext db = new ApplicationDbContext();
+        ProjectRolesHelper pRA = new ProjectRolesHelper();
+
+        [Authorize (Roles ="Admin")]
         public ActionResult Index()
         {
             // Populate Dropdown Lists
@@ -189,6 +193,58 @@ namespace Bugtracker.Controllers
 
             return View("Index");
         }
+
+
+        //Adding the user and project Lists 
+
+        public ActionResult ProjectAssignment()
+        {
+            // Populate Dropdown Lists
+            var context = new Models.ApplicationDbContext();
+
+            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+            new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Projects = Projectslist;
+
+            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
+            ViewBag.Users = userlist;
+
+            return View();
+        }
+
+        //  Adding users to Projects
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserAddToProject(string UserName, string ProjectId)
+        {
+            var context = new Models.ApplicationDbContext();
+
+            if (context == null)
+            {
+                throw new ArgumentNullException("context", "Context must not be null.");
+            }
+
+            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+
+            var userStore = new UserStore<ApplicationUser>(context);
+            var userManager = new UserManager<ApplicationUser>(userStore);
+            userManager.AddToRole(user.Id, ProjectId);
+
+
+            ViewBag.Message = "User successfully added to project !";
+
+            // Repopulate Dropdown Lists
+            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Projects = Projectslist;
+            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
+            ViewBag.Users = userlist;
+
+            return View("Index");
+        }
+
 
     }
 }

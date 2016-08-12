@@ -13,6 +13,7 @@ namespace Bugtracker.Controllers
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        ProjectRolesHelper pRA = new ProjectRolesHelper();
 
         // GET: Projects
         [Authorize (Roles ="Admin, Developer, Project Manager")]
