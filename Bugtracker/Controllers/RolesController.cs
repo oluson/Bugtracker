@@ -28,9 +28,9 @@ namespace Bugtracker.Controllers
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
-            // var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-            //new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
-            // ViewBag.Projects = Projectslist;
+            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Projects = Projectslist;
 
             return View();
         }

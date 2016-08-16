@@ -13,7 +13,7 @@ namespace Bugtracker.Controllers
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        [Authorize]
         // GET: Tickets
         public ActionResult Index()
         {
@@ -36,6 +36,7 @@ namespace Bugtracker.Controllers
             return View(tickets);
         }
 
+        [Authorize]
         // GET: Tickets/Create
         public ActionResult Create()
         {
