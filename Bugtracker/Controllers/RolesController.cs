@@ -28,9 +28,9 @@ namespace Bugtracker.Controllers
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
-            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
-            ViewBag.Projects = Projectslist;
+            // var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+            //new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            // ViewBag.Projects = Projectslist;
 
             return View();
         }
@@ -239,9 +239,9 @@ namespace Bugtracker.Controllers
 
             ViewBag.Message = "User successfully added to project !";
 
-            // Repopulate Dropdown Lists
-            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-            new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            //Repopulate Dropdown Lists
+           var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Projects = Projectslist;
             var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
