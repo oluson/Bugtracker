@@ -97,6 +97,7 @@ namespace Bugtracker.Migrations
                 {
                     roleManager.Create(new IdentityRole { Name = "Submitter" });
                 }
+
                 //TicketPriority Seeding Method
                 if (!context.TicketPriority.Any(t => t.Name == "Low"))
                 {
