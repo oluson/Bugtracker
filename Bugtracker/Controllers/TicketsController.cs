@@ -9,11 +9,11 @@ using System.Web.Mvc;
 using Bugtracker.Models;
 
 namespace Bugtracker.Controllers
-{
+{   [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-        [Authorize]
+        
         // GET: Tickets
         public ActionResult Index()
         {
@@ -36,7 +36,7 @@ namespace Bugtracker.Controllers
             return View(tickets);
         }
 
-        [Authorize]
+        
         // GET: Tickets/Create
         public ActionResult Create()
         {
@@ -67,8 +67,8 @@ namespace Bugtracker.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.AssignedToUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.AssignedToUserId);
-            ViewBag.OwnerUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.OwnerUserId);
+            ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", tickets.AssignedToUserId);
+            ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName", tickets.OwnerUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", tickets.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriority, "Id", "Name", tickets.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", tickets.TicketStatusId);
@@ -88,8 +88,8 @@ namespace Bugtracker.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.AssignedToUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.AssignedToUserId);
-            ViewBag.OwnerUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.OwnerUserId);
+            ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", tickets.AssignedToUserId);
+            ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName", tickets.OwnerUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", tickets.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriority, "Id", "Name", tickets.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", tickets.TicketStatusId);
@@ -110,8 +110,8 @@ namespace Bugtracker.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.AssignedToUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.AssignedToUserId);
-            ViewBag.OwnerUserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", tickets.OwnerUserId);
+            ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", tickets.AssignedToUserId);
+            ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName", tickets.OwnerUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", tickets.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriority, "Id", "Name", tickets.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatus, "Id", "Name", tickets.TicketStatusId);
@@ -120,6 +120,7 @@ namespace Bugtracker.Controllers
         }
 
         // GET: Tickets/Delete/5
+        [Authorize (Roles ="Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)
