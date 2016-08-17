@@ -147,7 +147,7 @@ namespace Bugtracker.Controllers
         public ActionResult EditUserRoles(string id)
         {
             var user = db.Users.Find(id);
-            AdminUserViewModel AdminModel = new AdminUserViewModel();
+            AdminViewModel AdminModel = new AdminViewModel();
             UserRolesHelper helper = new UserRolesHelper();
             var selected = helper.ListUserRoles(id);
             AdminModel.Role = new MultiSelectList(db.Roles, "Name", "Name", selected);
@@ -156,7 +156,7 @@ namespace Bugtracker.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUserRoles(AdminUserViewModel model, string id)
+        public ActionResult EditUserRoles(AdminViewModel model, string id)
         {
             //var user = User.Identity.GetUserId();
             UserRolesHelper helper = new UserRolesHelper();

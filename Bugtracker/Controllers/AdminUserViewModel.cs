@@ -3,10 +3,10 @@ using Bugtracker.Models;
 
 namespace Bugtracker.Controllers
 {
-    public class AdminUserViewModel
+    public class AdminViewModel
     {
-        public MultiSelectList Role { get; internal set; }
-        public object SelectedRoles { get; internal set; }
-        public ApplicationUser User { get; internal set; }
+        public MultiSelectList Role { get;  set; }
+        public object SelectedRoles { get;  set; }
+        public ApplicationUser User { get;  set; }
     }
 }
