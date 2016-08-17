@@ -25,8 +25,9 @@ namespace Bugtracker.Models
         }
         public void AddUserToProject(string userId, string ProjectId)
         {
+            var pId = Int32.Parse(ProjectId);
             ApplicationUser users = db.Users.Find(userId);
-            Projects project = db.Project.Find(ProjectId);
+            Projects project = db.Project.Find(pId);
             project.ProjectUsers.Add(users);
             db.SaveChanges();
         }

@@ -131,13 +131,13 @@
                 <h4>Add User to Project</h4>
             </div>
             <div class="panel-body">
-                @using (Html.BeginForm("ProjectAssignment"))
+                @using (Html.BeginForm("ProjectAssignment","Roles",FormMethod.Post))
             {
                     @Html.AntiForgeryToken()
                     @Html.ValidationSummary(true)
 
                     <p>User Name: @Html.DropDownList("UserName", (IEnumerable<SelectListItem>)ViewBag.Users, "Select ...")</p>
-                    //<p>Project Name: @Html.DropDownList("Id", (IEnumerable<SelectListItem>)ViewBag.Projects, "Select ...")</p>
+                    <p>Project Name: @Html.DropDownList("Name", (IEnumerable<SelectListItem>)ViewBag.Projects, "Select ...")</p>
                     <p><input type="submit" value="Save" class="btn-primary" /></p>
 
                 }

@@ -150,7 +150,7 @@ namespace Bugtracker.Controllers
             AdminUserViewModel AdminModel = new AdminUserViewModel();
             UserRolesHelper helper = new UserRolesHelper();
             var selected = helper.ListUserRoles(id);
-            AdminModel.Roles = new MultiSelectList(db.Roles, "Name", "Name", selected);
+            AdminModel.Role = new MultiSelectList(db.Roles, "Name", "Name", selected);
             AdminModel.User = user;
             return View(AdminModel);
         }
@@ -165,17 +165,17 @@ namespace Bugtracker.Controllers
             {
                 model.SelectedRoles = new string[] { "" };
             }
-            foreach (var role in db.Roles.Select(r => r.Name))
-            {
-                if (model.SelectedRoles.Contains(role))
-                {
-                    helper.AddUserToRole(id, role);
-                }
-                else
-                {
-                    helper.RemoveUserFromRole(id, role);
-                }
-            }
+            //foreach (var role in db.Roles.Select(r => r.Name))
+            //{
+            //   // if (model.SelectedRoles.Contains(role))
+            //    {
+            //        helper.AddUserToRole(id, role);
+            //    }
+            //    else
+            //    {
+            //        helper.RemoveUserFromRole(id, role);
+            //    }
+            //}
             return RedirectToAction("UserRoleAdmin");
         }
     }

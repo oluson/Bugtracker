@@ -18,18 +18,18 @@ namespace Bugtracker.Controllers
         public ActionResult Index()
         {
             // Populate Dropdown Lists
-            var context = new Models.ApplicationDbContext();
+            //var context = new Models.ApplicationDbContext();
 
-            var rolelist = context.Roles.OrderBy(r => r.Name).ToList().Select(rr =>
+            var rolelist = db.Roles.OrderBy(r => r.Name).ToList().Select(rr =>
             new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Roles = rolelist;
 
-            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
-            new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
+            var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            new SelectListItem { Value = uu.Id, Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
-            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            var Projectslist = db.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+           new SelectListItem { Value = rr.Id.ToString(), Text = rr.Name }).ToList();
             ViewBag.Projects = Projectslist;
 
             return View();
@@ -50,12 +50,12 @@ namespace Bugtracker.Controllers
 
             try
             {
-                var context = new Models.ApplicationDbContext();
-                context.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole()
+                //var context = new Models.ApplicationDbContext();
+                db.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole()
                 {
                     Name = collection["RoleName"]
                 });
-                context.SaveChanges();
+                db.SaveChanges();
                 ViewBag.Message = "Role created successfully !";
                 return RedirectToAction("Index");
             }
@@ -68,10 +68,10 @@ namespace Bugtracker.Controllers
 
         public ActionResult Delete(string RoleName)
         {
-            var context = new Models.ApplicationDbContext();
-            var thisRole = context.Roles.Where(r => r.Name.Equals(RoleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-            context.Roles.Remove(thisRole);
-            context.SaveChanges();
+            //var context = new Models.ApplicationDbContext();
+            var thisRole = db.Roles.Where(r => r.Name.Equals(RoleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+            db.Roles.Remove(thisRole);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
@@ -79,8 +79,8 @@ namespace Bugtracker.Controllers
         // GET: /Roles/Edit/5
         public ActionResult Edit(string roleName)
         {
-            var context = new Models.ApplicationDbContext();
-            var thisRole = context.Roles.Where(r => r.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+            //var context = new Models.ApplicationDbContext();
+            var thisRole = db.Roles.Where(r => r.Name.Equals(roleName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
             return View(thisRole);
         }
@@ -93,9 +93,9 @@ namespace Bugtracker.Controllers
         {
             try
             {
-                var context = new Models.ApplicationDbContext();
-                context.Entry(role).State = System.Data.Entity.EntityState.Modified;
-                context.SaveChanges();
+                //var context = new Models.ApplicationDbContext();
+                db.Entry(role).State = System.Data.Entity.EntityState.Modified;
+                db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -111,16 +111,16 @@ namespace Bugtracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult RoleAddToUser(string UserName, string RoleName)
         {
-            var context = new Models.ApplicationDbContext();
+            //var context = new Models.ApplicationDbContext();
 
-            if (context == null)
-            {
-                throw new ArgumentNullException("context", "Context must not be null.");
-            }
+            //if (context == null)
+            //{
+            //    throw new ArgumentNullException("context", "Context must not be null.");
+            //}
 
-            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+            ApplicationUser user = db.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
-            var userStore = new UserStore<ApplicationUser>(context);
+            var userStore = new UserStore<ApplicationUser>(db);
             var userManager = new UserManager<ApplicationUser>(userStore);
             userManager.AddToRole(user.Id, RoleName);
 
@@ -128,9 +128,9 @@ namespace Bugtracker.Controllers
             ViewBag.Message = "Role created successfully !";
 
             // Repopulate Dropdown Lists
-            var rolelist = context.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            var rolelist = db.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Roles = rolelist;
-            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
@@ -145,18 +145,18 @@ namespace Bugtracker.Controllers
         {
             if (!string.IsNullOrWhiteSpace(UserName))
             {
-                var context = new Models.ApplicationDbContext();
-                ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+              //  var context = new Models.ApplicationDbContext();
+                ApplicationUser user = db.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
-                var userStore = new UserStore<ApplicationUser>(context);
+                var userStore = new UserStore<ApplicationUser>(db);
                 var userManager = new UserManager<ApplicationUser>(userStore);
                 ViewBag.RolesForThisUser = userManager.GetRoles(user.Id);
 
 
                 // Repopulate Dropdown Lists
-                var rolelist = context.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+                var rolelist = db.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
                 ViewBag.Roles = rolelist;
-                var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+                var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
                 new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
                 ViewBag.Users = userlist;
                 ViewBag.Message = "Roles retrieved successfully !";
@@ -172,10 +172,10 @@ namespace Bugtracker.Controllers
         public ActionResult DeleteRoleForUser(string UserName, string RoleName)
         {
             var account = new AccountController();
-            var context = new Models.ApplicationDbContext();
-            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
+           // var context = new Models.ApplicationDbContext();
+            ApplicationUser user = db.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
 
-            var userStore = new UserStore<ApplicationUser>(context);
+            var userStore = new UserStore<ApplicationUser>(db);
             var userManager = new UserManager<ApplicationUser>(userStore);
 
 
@@ -190,9 +190,9 @@ namespace Bugtracker.Controllers
             }
 
             // Repopulate Dropdown Lists
-            var rolelist = context.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
+            var rolelist = db.Roles.OrderBy(r => r.Name).ToList().Select(rr => new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Roles = rolelist;
-            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
@@ -205,13 +205,13 @@ namespace Bugtracker.Controllers
         public ActionResult ProjectAssignment()
         {
             // Populate Dropdown Lists
-            var context = new Models.ApplicationDbContext();
+            //var context = new Models.ApplicationDbContext();
 
-            var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+            var Projectslist = db.Project.OrderBy(r => r.Name).ToList().Select(rr =>
             new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
             ViewBag.Projects = Projectslist;
 
-            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
             new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
 
@@ -221,31 +221,26 @@ namespace Bugtracker.Controllers
         //  Adding users to Projects
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ProjectAssignment(string UserName, string ProjectId)
+        public ActionResult ProjectAssignment(string UserName, string Name)
         {
-            var context = new Models.ApplicationDbContext();
+           // var context = new Models.ApplicationDbContext();
 
-            if (context == null)
-            {
-                throw new ArgumentNullException("context", "Context must not be null.");
-            }
-
-            ApplicationUser user = context.Users.Where(u => u.UserName.Equals(UserName, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault();
-
-            var userStore = new UserStore<ApplicationUser>(context);
-            var userManager = new UserManager<ApplicationUser>(userStore);
-            userManager.AddToRole(user.Id, ProjectId);
+            ProjectRolesHelper pRA = new ProjectRolesHelper();
+            pRA.AddUserToProject(UserName, Name);
 
 
             ViewBag.Message = "User successfully added to project !";
 
             //Repopulate Dropdown Lists
-           var Projectslist = context.Project.OrderBy(r => r.Name).ToList().Select(rr =>
-           new SelectListItem { Value = rr.Name.ToString(), Text = rr.Name }).ToList();
-            ViewBag.Projects = Projectslist;
-            var userlist = context.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
-            new SelectListItem { Value = uu.UserName.ToString(), Text = uu.UserName }).ToList();
+            
+            var userlist = db.Users.OrderBy(u => u.UserName).ToList().Select(uu =>
+            new SelectListItem { Value = uu.Id, Text = uu.UserName }).ToList();
             ViewBag.Users = userlist;
+
+            var Projectslist = db.Project.OrderBy(r => r.Name).ToList().Select(rr =>
+           new SelectListItem { Value = rr.Id.ToString(), Text = rr.Name }).ToList();
+            ViewBag.Projects = Projectslist;
+
 
             return View("Index");
         }
