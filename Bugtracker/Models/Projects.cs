@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -13,6 +14,12 @@ namespace Bugtracker.Models
             ProjectUsers = new HashSet<ApplicationUser>();
         }
         public int Id { get; set; }
+         [Required]
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset Deadline { get; set; }
+        public bool Archived { get; set; }
         public string Name { get; set; }
 
         public virtual ICollection<Tickets> Tickets { get; set; }

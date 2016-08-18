@@ -166,20 +166,26 @@ namespace Bugtracker.Migrations
                     ticketStatusResolved.Name = "Resolved";
                     context.TicketStatus.Add(ticketStatusResolved);
                 }
+                if (!context.TicketStatus.Any(t => t.Name == "Closed"))
+                {
+                    var ticketStatusResolved = new TicketStatuses();
+                    ticketStatusResolved.Name = "Closed";
+                    context.TicketStatus.Add(ticketStatusResolved);
+                }
 
                 // //Ticket Notification Seeding Method
-            //    context.TicketNotification.AddOrUpdate(n => n.UserId,
-            //   new TicketNotification() { UserId = "Ticket Submitted" },
-            //   new TicketNotification() { UserId = "Ticket Assigned" },
-            //   new TicketNotification() { UserId = "Ticket Resolved" },
-            //   new TicketNotification() { UserId = "Reminder: Update Tickets" },
-            //   new TicketNotification() { UserId = "Ticket Modified" },
-            //   new TicketNotification() { UserId = "Ticket Reassigned" },
-            //   new TicketNotification() { UserId = "Project Reassigned" },
-            //   new TicketNotification() { UserId = "Project Assigned" },
-            //   new TicketNotification() { UserId = "New Project Manager" },
-            //   new TicketNotification() { UserId = "Project Deadline Changed" }
-            //   );
+                //    context.TicketNotification.AddOrUpdate(n => n.UserId,
+                //   new TicketNotification() { UserId = "Ticket Submitted" },
+                //   new TicketNotification() { UserId = "Ticket Assigned" },
+                //   new TicketNotification() { UserId = "Ticket Resolved" },
+                //   new TicketNotification() { UserId = "Reminder: Update Tickets" },
+                //   new TicketNotification() { UserId = "Ticket Modified" },
+                //   new TicketNotification() { UserId = "Ticket Reassigned" },
+                //   new TicketNotification() { UserId = "Project Reassigned" },
+                //   new TicketNotification() { UserId = "Project Assigned" },
+                //   new TicketNotification() { UserId = "New Project Manager" },
+                //   new TicketNotification() { UserId = "Project Deadline Changed" }
+                //   );
             }
         }
     }

@@ -1,57 +1,96 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
+﻿using Bugtracker.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Bugtracker.Models
+namespace Bugtracker.Controllers
 {
     public class ProjectRolesHelper
     {
-        private UserManager<ApplicationUser> manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
-        private ApplicationDbContext db = new ApplicationDbContext();
-        public bool IsUserOnProject(string userId, int ProjectId)
-        {
-            var project = db.Project.Find(ProjectId);
-            var projectUser = project.ProjectUsers.Any(u => u.Id.Equals(userId));
-            return projectUser;
-        }
-        public List<Projects> ListUserProjects(string userId)
-        {
-            ApplicationUser users = db.Users.Find(userId);
-            return users.Project.ToList();
+        private ApplicationDbContext db;
 
-        }
-        public void AddUserToProject(string userId, string ProjectId)
+        public ProjectRolesHelper(ApplicationDbContext context)
         {
-            var pId = Int32.Parse(ProjectId);
-            ApplicationUser users = db.Users.Find(userId);
-            Projects project = db.Project.Find(pId);
-            project.ProjectUsers.Add(users);
-            db.SaveChanges();
+            this.db = context;
         }
-        //public bool AddUserToRoles(string userId, string[] ProjectId)
-        //{
-        //    var result = manager.AddToRoles(userId, ProjectId);
-        //    return result.Succeeded;
-        public void RemoveUserFromProject(string userId, string ProjectId)
+
+        public void AssignUser(string userId, int projectId)
         {
-            ApplicationUser users = db.Users.Find(userId);
-            Projects project = db.Project.Find(ProjectId);
-            project.ProjectUsers.Remove(users);
-            db.SaveChanges();
+            if (!HasProject(userId, projectId))
+            {
+                var user = db.Users.Find(userId);
+                var project = db.Project.Find(projectId);
+                project.ProjectUsers.Add(user);
+            }
         }
-        public List<ApplicationUser> ListProjectUsers(int ProjectId)
+
+        public bool HasProject(string userId, int projectId)
         {
-            Projects project = db.Project.Find(ProjectId);
+            var user = db.Users.Find(userId);
+            var project = db.Project.Find(projectId);
+            if (project.ProjectUsers.Contains(user)) //Or Any(u=> u.Id ==userId)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public void RemoveUser(string userId, int projectId)
+        {
+            if (HasProject(userId, projectId))
+            {
+                var user = db.Users.Find(userId);
+                var project = db.Project.Find(projectId);
+                project.ProjectUsers.Remove(user);
+            }
+        }
+
+        public List<Projects> ListProjects(string userId)
+        {
+            var user = db.Users.Find(userId);
+            return user.Project.ToList();
+        }
+
+        public List<ApplicationUser> ListUsers(int projectId)
+        {
+            var project = db.Project.Find(projectId);
             return project.ProjectUsers.ToList();
         }
-        public List<ApplicationUser> UsersNotInProject(int ProjectId)
+
+        public List<ApplicationUser> ListAbsentUsers(int projectId)
         {
-            Projects projects = db.Project.Find(ProjectId);
-            var projUsers = projects.ProjectUsers;
-            return projects.ProjectUsers.Where(u => !projUsers.Contains(u)).ToList();
+            var project = db.Project.Find(projectId);
+            var users = db.Users.ToList();
+            var absentUsers = new List<ApplicationUser>();
+            foreach (var user in users)
+            {
+                if (!HasProject(user.Id, projectId))
+                {
+                    absentUsers.Add(user);
+                }
+            }
+            return absentUsers;
         }
+
+        public List<string> ListProjectManagers(int projectId)
+        {
+            var projectManagers = new List<string>();
+            var project = db.Project.Find(projectId);
+            var projectUsers = project.ProjectUsers.ToList();
+            UserRolesHelper helper = new UserRolesHelper(db);
+            foreach (var user in projectUsers)
+            {
+                if (helper.IsUserInRole(user.Id, "Project Manager"))
+                {
+                    projectManagers.Add(user.Email);
+                }
+            }
+            return projectManagers;
+        }
+
     }
 }

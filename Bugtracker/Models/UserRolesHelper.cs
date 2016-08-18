@@ -12,6 +12,12 @@ namespace Bugtracker.Models
     {
         private UserManager<ApplicationUser> manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
         private ApplicationDbContext db = new ApplicationDbContext();
+
+        public UserRolesHelper(ApplicationDbContext db)
+        {
+            this.db = db;
+        }
+
         public bool IsUserInRole(string userId, string roleName)
         {
             return manager.IsInRole(userId, roleName);
@@ -44,8 +50,7 @@ namespace Bugtracker.Models
                 if (IsUserInRole(user.Id, roleName))
                     resultList.Add(user);
             }
-            //var roleId = db.Roles.FirstOrDefault(r => r.Name == roleName).Id;
-            //resultList = manager.Users.Where(u => u.Roles.Any(r => r.RoleId == roleId)).ToList();
+            
             return resultList;
         }
         public ICollection<ApplicationUser> UsersNotInRole(string roleName)
@@ -57,8 +62,7 @@ namespace Bugtracker.Models
                 if (!IsUserInRole(user.Id, roleName))
                     resultList.Add(user);
             }
-            //var roleId = db.Roles.FirstOrDefault(r => r.Name == roleName).Id;
-            //resultList = manager.Users.Where(u => u.Roles.Any(r => r.RoleId != roleId)).ToList();
+            
             return resultList;
         }
     }

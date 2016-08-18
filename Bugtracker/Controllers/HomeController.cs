@@ -12,8 +12,10 @@ namespace Bugtracker.Controllers
        // private UserRolesHelper Urh = new UserRolesHelper(new ApplicationDbContext);
         public ActionResult Index()
         {
-        
-            return View();
+            DashboardViewModel mo = new DashboardViewModel();
+            mo.Name = "Bugtracker";
+            
+            return View(mo);
         }
 
         public ActionResult About(string uid, string role)
