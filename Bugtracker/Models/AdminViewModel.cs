@@ -61,16 +61,16 @@ public class NotificationsViewModel
         public IEnumerable<Projects> AssignedProjects { get; set; }
     }
 
-    //public class AddRemoveRolesViewModel
-    //{
-    //    public ApplicationUser User { get; set; }
-    //    public MultiSelectList Roles { get; set; }
-    //    public string[] SelectedRoles { get; set; }
-    //public List<string> SelectedRoles { get; set; }
+public class AddRemoveRolesViewModel
+{
+    public ApplicationUser User { get; set; }
+    public MultiSelectList Roles { get; set; }
+    public string[] SelectedRoles { get; set; }
+   // public List<string> SelectedRoles { get; set; }
     //public IEnumerable<SelectListItem> SelectedRoles { get; set; }
-    //}
+}
 
-    public class AssignUserViewModel
+public class AssignUserViewModel
     {
         public ApplicationUser User { get; set; }
         public SelectList Projects { get; set; }

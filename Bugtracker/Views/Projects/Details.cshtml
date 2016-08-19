@@ -105,22 +105,22 @@
                                     @ticket.Created.ToString("M/d/yy")
                                 </td>
                                 <td>
-                                    @ticket.Type.Name
+                                    @ticket.TicketType.Name
                                 </td>
                                 <td>
-                                    @ticket.Priority
+                                    @ticket.TicketPriorityId
                                 </td>
                                 <td>
-                                    @ticket.Status
+                                    @ticket.TicketStatusId
                                 </td>
                                 <td>
-                                    @if (ticket.Assignee != null)
-                                    { @ticket.Assignee.FullName }
+                                    @if (ticket.AssignedToUser != null)
+                                    { @ticket.AssignedToUser.LastName }
                                     else
                                     { <span class="text-danger">Unassigned</span> }
                                 </td>
                                 <td class="hidden">
-                                    @ticket.Body
+                                    @ticket.Description
                                 </td>
                             </tr>
                         }

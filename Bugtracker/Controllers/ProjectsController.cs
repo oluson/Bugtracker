@@ -99,6 +99,7 @@ namespace Bugtracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                project.Name = project.Title;
                 ProjectRolesHelper helper = new ProjectRolesHelper(db);
                 project.Created = System.DateTimeOffset.Now;
                 project.Archived = false;
