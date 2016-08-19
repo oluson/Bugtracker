@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Bugtracker.Models.AdminUserView>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" />
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Assigned Roles List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User.Roles)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.User.FirstName
+                </td>
+                <td>
+                    @item.User.LastName
+                    @*@item.user.Email*@
+                </td>
+                <td>
+                    @foreach (var items in item.Role)
+                    {
+                        @items
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit Roles", "ManageRoles", new { Id = item.User.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section scripts{
+    <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!--DataTables-->
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <script>
+            $('.table').DataTable();
+    </script>
+}

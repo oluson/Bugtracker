@@ -115,7 +115,10 @@
                                 </td>
                                 <td>
                                     @if (ticket.AssignedToUser != null)
-                                    { @ticket.AssignedToUser.LastName }
+                                    {
+                                        <span>@ticket.AssignedToUser.FirstName</span> <span>@ticket.AssignedToUser.LastName</span>
+
+                                    }
                                     else
                                     { <span class="text-danger">Unassigned</span> }
                                 </td>

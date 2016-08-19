@@ -82,6 +82,6 @@ C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\M
 C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.csprojResolveAssemblyReference.cache
 C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.dll
 C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.pdb
-C:\Users\oosaj\documents\visual studio 2015\Projects\Bugtracker\Bugtracker\obj\Debug\Bugtracker.csprojResolveAssemblyReference.cache

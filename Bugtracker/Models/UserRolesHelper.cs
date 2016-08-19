@@ -18,6 +18,10 @@ namespace Bugtracker.Models
             this.db = db;
         }
 
+        public UserRolesHelper()
+        {
+        }
+
         public bool IsUserInRole(string userId, string roleName)
         {
             return manager.IsInRole(userId, roleName);

@@ -29,10 +29,10 @@ namespace Bugtracker.Models
     {
         public UsersViewModel(string id, string name, IList<string> roles, List<string> projects)
         {
-            this.Id = id;
-            this.Name = name;
-            this.Roles = roles;
-            this.Projects = projects;
+            Id = id;
+            Name = name;
+            Roles = roles;
+            Projects = projects;
         }
 
         public string Id { get; set; }
@@ -66,7 +66,7 @@ public class AddRemoveRolesViewModel
     public ApplicationUser User { get; set; }
     public MultiSelectList Roles { get; set; }
     public string[] SelectedRoles { get; set; }
-   // public List<string> SelectedRoles { get; set; }
+   // public List<string> SelectedRole { get; set; }
     //public IEnumerable<SelectListItem> SelectedRoles { get; set; }
 }
 

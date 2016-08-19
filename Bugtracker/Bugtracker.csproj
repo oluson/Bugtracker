@@ -217,6 +217,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StringUtilities.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -224,6 +225,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminUserView.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\AssignProjectUsersViewModel.cs" />
     <Compile Include="Models\AssignTicketUserViewModel.cs" />
@@ -263,6 +265,8 @@
     <Content Include="Views\Projects\ViewAll.cshtml" />
     <Content Include="Views\Projects\Archive.cshtml" />
     <Content Include="Views\Projects\ArchiveProject.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
+    <Content Include="Views\Roles\ManageRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -336,7 +340,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\" />
-    <Folder Include="Views\Roles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
