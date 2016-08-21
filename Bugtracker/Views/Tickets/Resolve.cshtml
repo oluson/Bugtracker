@@ -1,0 +1,67 @@
+﻿@model Bugtracker.Models.Tickets
+@{
+    ViewBag.Title = "Resolve Ticket";
+}
+
+<div class="col-md-12 subnav">
+    <h1>Resolve Ticket: @Model.Title</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 content">
+            <p>Resolving a ticket will change its status to Resolved. An email will be sent to your project managers. A project manager can close the ticket and will contact you if he/she feels there is anything left unaddressed on this ticket.</p>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Project Title</th>
+                        <th>Assigned To</th>
+                        <th>Created</th>
+                        <th>Updated</th>
+                        <th>Type</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.Project.Title</td>
+                        @if (@Model.AssignedToUser == null)
+                        {
+                            <td>Unassigned</td>
+                        }
+                        else
+                        {
+                            <td>@Model.AssignedToUser.FirstName @Model.AssignedToUser.LastName</td>
+                        }
+                        <td>@Model.Created.ToString("M/d/yy")</td>
+                        @if (@Model.Updated == null)
+                        {
+                            <td>Never</td>
+                        }
+                        else
+                        {
+                            <td>@Model.Updated.Value.ToString("M/d/yy")</td>
+                        }
+                        <td>@Model.TicketType.Name</td>
+                        <td>@Model.TicketPriority</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.Id)
+                <div class="form-actions no-color content">
+                    <input type="submit" value="Resolve" class="btn btn-default" />
+                </div>
+                <p class="content">@Html.ActionLink("Back to Tickets", "Index")</p>
+            }
+
+
+        </div>
+    </div>
+</div>
+

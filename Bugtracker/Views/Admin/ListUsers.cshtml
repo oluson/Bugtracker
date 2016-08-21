@@ -1,4 +1,8 @@
 ﻿@model Bugtracker.Models.UsersListViewModel
+
+ <!--CSS-->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+
 @{
     ViewBag.Title = "Users List";
 }
@@ -77,6 +81,22 @@
         </div>
     </div>
 </div>
+
+
+<!--jQuery-->
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+@*@Scripts.Render("~/bundles/jquery")*@
+<!--DataTables-->
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $('.table').DataTable();
+</script>
+
+
+
+
+
 
 @section Scripts {
     <script>

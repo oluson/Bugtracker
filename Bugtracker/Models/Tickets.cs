@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace Bugtracker.Models
 {
@@ -57,5 +58,6 @@ namespace Bugtracker.Models
         public virtual ApplicationUser OwnerUser { get; set; }
         public virtual ApplicationUser AssignedToUser { get; set; }
 
+       
     }
 }

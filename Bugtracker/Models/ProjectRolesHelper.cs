@@ -58,7 +58,15 @@ namespace Bugtracker.Controllers
         public List<ApplicationUser> ListUsers(int projectId)
         {
             var project = db.Project.Find(projectId);
-            return project.ProjectUsers.ToList();
+            List<ApplicationUser> lst = new List<ApplicationUser>();
+            
+            foreach (ApplicationUser usr in project.ProjectUsers)
+            {
+
+                usr.DisplayName = usr.FirstName + " " + usr.LastName;
+                lst.Add(usr);
+            }
+            return lst;
         }
 
         public List<ApplicationUser> ListAbsentUsers(int projectId)
@@ -70,6 +78,7 @@ namespace Bugtracker.Controllers
             {
                 if (!HasProject(user.Id, projectId))
                 {
+                    user.DisplayName = user.FirstName + " " + user.LastName;
                     absentUsers.Add(user);
                 }
             }

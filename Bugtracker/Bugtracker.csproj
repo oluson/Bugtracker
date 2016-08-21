@@ -213,11 +213,10 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AdminUserViewModel.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
-    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\StringUtilities.cs" />
     <Compile Include="Controllers\TicketsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -225,7 +224,6 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\AdminUserView.cs" />
     <Compile Include="Models\AdminViewModel.cs" />
     <Compile Include="Models\AssignProjectUsersViewModel.cs" />
     <Compile Include="Models\AssignTicketUserViewModel.cs" />
@@ -265,8 +263,12 @@
     <Content Include="Views\Projects\ViewAll.cshtml" />
     <Content Include="Views\Projects\Archive.cshtml" />
     <Content Include="Views\Projects\ArchiveProject.cshtml" />
-    <Content Include="Views\Roles\Index.cshtml" />
-    <Content Include="Views\Roles\ManageRoles.cshtml" />
+    <Content Include="Views\Tickets\AssignUser.cshtml" />
+    <Content Include="Views\Tickets\AddComment.cshtml" />
+    <Content Include="Views\Tickets\History.cshtml" />
+    <Content Include="Views\Tickets\Resolve.cshtml" />
+    <Content Include="Views\Tickets\AddAttachment.cshtml" />
+    <Content Include="Views\Tickets\Close.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />

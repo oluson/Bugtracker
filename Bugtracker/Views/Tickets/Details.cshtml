@@ -1,105 +1,161 @@
 ﻿@model Bugtracker.Models.Tickets
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Ticket Details";
 }
 
-<h2>Details</h2>
+<div class="col-md-8 subnav">
+    <h1>Ticket: @Model.Title</h1>
+</div>
+<div class="col-md-4 subnav">
+    <div class="admin-btns">
+        @if (!Model.TicketStatus.Name.ToString().Equals("Closed"))
+        {
+            if (ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+            {
+                @Html.ActionLink("Assign User", "AssignUser", new { id = Model.Id }, new { @class = "action-btn" })
+                @Html.ActionLink("Close", "Close", new { id = Model.Id }, new { @class = "action-btn" })
+            }
+            if (ViewBag.UserId == Model.AssignedToUserId || ViewBag.UserId == Model.OwnerUserId || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "action-btn" })
+            }
 
-<div>
-    <h4>Tickets</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.AssignedToUser.FirstName)
-        </dt>
+            if (ViewContext.HttpContext.User.IsInRole("Developer") && ViewBag.UserId == Model.AssignedToUserId && !Model.TicketStatus.Name.ToString().Equals("Resolved"))
+            {
+                @Html.ActionLink("Resolve", "Resolve", new { id = Model.Id }, new { @class = "action-btn" })
+            }
+        }
 
-        <dd>
-            @Html.DisplayFor(model => model.AssignedToUser.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.OwnerUser.FirstName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.OwnerUser.FirstName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Project.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketPriority.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketPriority.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketStatus.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketStatus.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TicketType.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TicketType.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-
-    </dl>
+    </div>
 </div>
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Project: @Html.ActionLink(Model.Project.Title, "Details", "Projects", new { id = Model.ProjectId }, null)</h3>
+            <h3>Created by @Model.OwnerUser.FirstName @Model.OwnerUser.LastName on @Model.Created.ToString("MMMM dd, yyyy h:mm t")M</h3>
+            @if (Model.Updated.HasValue)
+            {
+                <h4 class="text-danger">Updated on @Model.Updated.Value.ToString("MMMM dd, yyyy h:mm t")M - @Html.ActionLink("View History", "History", new { id = Model.Id })</h4>
+            }
+            @if (Model.AssignedToUser != null)
+            {
+                <h3>Assigned to @Model.AssignedToUser.FirstName @Model.AssignedToUser.LastName</h3>
+            }
+            else
+            {
+                <h3>Assigned to: <span class="text-danger">Unassigned</span></h3>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.TicketType.Name</td>
+                        <td>@Model.TicketPriority.Name</td>
+                        <td>@Model.TicketStatus.Name</td>
+                    </tr>
+                </tbody>
+            </table>
 
-@foreach(var user in Model.Project.ProjectUsers)
-{
-    @user.UserName
-}
+            <p>@Model.Description</p>
+        </div>
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="attachment">Comments</h3>
+                </div>
+                <div class="col-md-6">
+                    @if (!Model.TicketStatus.Name.ToString().Equals("Closed"))
+                    {
+                        @Html.ActionLink("New Comment", "AddComment", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    }
+                </div>
+            </div>
+            @{ var comments = Model.TicketComment; }
+            @foreach (var comment in comments)
+            {
+                <div class="comment">
+                    <h4>Posted by @comment.User.FirstName @comment.User.LastName on @comment.Created.ToString("M/d/yy h:mm t")M</h4>
+                    <p>@comment.Comment</p>
+                    @if (ViewBag.UserId == @comment.UserId || ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                    {
+                        using (Html.BeginForm("DeleteComment", "Tickets", FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this comment?')" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="Id" value="@comment.Id" />
+                            <input type="hidden" name="TicketId" value="@comment.TicketId" />
+                            <div class="form-group comment-btn-delete">
+                                <input type="submit" value="Delete" class="delete" />
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-6">
+                    <h3 class="attachment">Attachments</h3>
+                </div>
+                <div class="col-md-6">
+                    @if (!Model.TicketStatus.Name.ToString().Equals("Closed"))
+                    {
+                        @Html.ActionLink("New Attachment", "AddAttachment", new { id = Model.Id }, new { @class = "btn btn-default" })
+                    }
+                </div>
+            </div>
+            @{ var attachments = Model.TicketAttachment; }
+            @foreach (var attachment in attachments)
+            {
+                <div class="col-md-6">
+                    @if (attachment.FileUrl.Contains(".pdf") || attachment.FileUrl.Contains(".doc"))
+                    {
+                        <p>
+                            <a href="@attachment.FileUrl"><img src="~/Content/Images/document.png" class="img-responsive"></a>
+                        </p>
+                    }
+                    else
+                    {
+                        <p><a href="@attachment.FileUrl"><img class="img-responsive" src="@attachment.FileUrl"></a></p>
+                    }
+                </div>
+                <div class="col-md-6">
+                    <p>@attachment.Description</p>
+                    @if (@attachment.UserId != null)
+                    {<p class="author">Posted by @attachment.User.FirstName @attachment.User.LastName</p>}
+                </div>
+                <div class="col-md-12">
+                    @if (ViewBag.UserId == @attachment.UserId || ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                    {
+
+                        using (Html.BeginForm("DeleteAttachment", "Tickets", FormMethod.Post, new { onsubmit = "return confirm('Are you sure you want to delete this attachment?')" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="Id" value="@attachment.Id" />
+                            <input type="hidden" name="TicketId" value="@attachment.TicketId" />
+                            <div class="form-group comment-btn-delete">
+                                <input type="submit" value="Delete" class="delete" />
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+
+    </div>
+</div>

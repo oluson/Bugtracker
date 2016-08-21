@@ -9,7 +9,6 @@ namespace Bugtracker.Models
 
     public class AdminViewModel
     {
-        public ApplicationUser User { get; set; }
         public string Name { get; set; }
         public string Id { get; set; }
         public MultiSelectList Roles { get; set; }

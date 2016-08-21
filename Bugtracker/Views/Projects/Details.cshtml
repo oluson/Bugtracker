@@ -7,16 +7,18 @@
 <div class="col-md-8 subnav">
     <h1>Project: @Model.Id</h1>
 </div>
-<div class="col-md-4 subnav">
-    <div class="admin-btns">
-        @if (Model.Archived == false)
-        {
-            if (ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+<div class="row">
+    <div class="col-md-4 subnav">
+        <div class="admin-btns">
+            @if (Model.Archived == false)
             {
-                @Html.ActionLink("Assign Users", "AssignUsers", new { id = Model.Id }, new { @class = "action-btn" })
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "action-btn" })
+                if (ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
+                {
+                    @Html.ActionLink("Assign Users", "AssignUsers", new { id = Model.Id }, new { @class = "action-btn" })
+                    @Html.ActionLink(" | Edit", "Edit", new { id = Model.Id }, new { @class = "action-btn" })
+                }
             }
-        }
+        </div>
     </div>
 </div>
 
@@ -59,12 +61,16 @@
             <h3>Tickets</h3>
 
         </div>
-        <div class="col-md-3">
-            @if (ViewContext.HttpContext.User.IsInRole("Submitter") && Model.Archived == false)
-            {
-                @Html.ActionLink("New Ticket", "Create", "Tickets", new { id = Model.Id }, new { @class = "btn btn-default" })
-            }
+        <div class="row">
+            <div class="col-md-3">
+                @*@if (ViewContext.HttpContext.User.IsInRole("Submitter") &&*@
+                @if(Model.Archived == false)
+                {
+                    @Html.ActionLink("New Ticket", "Create", "Tickets", new { id = Model.Id }, new { @class = "btn btn-default" })
+                }
+            </div>
         </div>
+
         <div class="row">
             <div class="col-md-12 content">
                 <table class="table table-striped">
@@ -108,15 +114,15 @@
                                     @ticket.TicketType.Name
                                 </td>
                                 <td>
-                                    @ticket.TicketPriorityId
+                                    @ticket.TicketPriority.Name
                                 </td>
                                 <td>
-                                    @ticket.TicketStatusId
+                                    @ticket.TicketStatus.Name
                                 </td>
                                 <td>
                                     @if (ticket.AssignedToUser != null)
                                     {
-                                        <span>@ticket.AssignedToUser.FirstName</span> <span>@ticket.AssignedToUser.LastName</span>
+                                        <span>@ticket.AssignedToUser.FirstName </span> <span>@ticket.AssignedToUser.LastName</span>
 
                                     }
                                     else
@@ -164,27 +170,3 @@
         </div>
     </div>
 </div>
-
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.searchable-select').chosen();
-            $('.table').dataTable({
-                "order": [1, 'desc']
-            })
-                      .columnFilter({
-                          aoColumns: [
-                              null,
-                              null,
-                              { type: "select", values: ['Bug', 'Feature Request', 'Documentation'] },
-                              { type: "select", values: ['High', 'Medium', 'Low'] },
-                              { type: "select", values: ['Open', 'Pending', 'Resolved', 'Closed'] },
-                              null
-                          ]
-
-                      });
-        });
-
-    </script>
-}

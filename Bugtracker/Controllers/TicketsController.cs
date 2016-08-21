@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Bugtracker.Models;
 using Microsoft.AspNet.Identity;
-using Bugtracker.Controllers;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -93,6 +91,24 @@ namespace Bugtracker.Controllers
             {
                 return HttpNotFound();
             }
+            var dbUserRoles = db.TicketPriority.ToList();
+            var priority = db.TicketPriority
+                        .Select(x =>
+                                new SelectListItem
+                                {
+                                    Value = x.Id.ToString(),
+                                    Text = x.Name
+                                });
+            var types = db.TicketType
+                       .Select(x =>
+                               new SelectListItem
+                               {
+                                   Value = x.Id.ToString(),
+                                   Text = x.Name
+                               });
+
+            ViewBag.Priorities = new SelectList(priority, "Value", "Text");
+            ViewBag.Types = new SelectList(types, "Value", "Text");
             ViewBag.ProjectId = id;
             ViewBag.ProjectTitle = project.Title;
             return View();
@@ -103,7 +119,7 @@ namespace Bugtracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,ProjectId,Title,Body,Priority,Type")] Tickets ticket)
+        public async Task<ActionResult> Create([Bind(Include = "Id,ProjectId,Title,Description,TicketPriorityId,TicketTypeId")] Tickets ticket)
         {
             if (ModelState.IsValid)
             {
@@ -113,11 +129,16 @@ namespace Bugtracker.Controllers
                 }
                 ticket.Created = System.DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
-                ticket.TicketStatus.Name = "Unassigned";
+               // ticket.TicketStatus = new TicketStatuses();
+                ticket.TicketStatusId = 1;
+                //ticket.TicketPriority = new TicketPriorities();
                 TicketHistories history = new TicketHistories();
                 history.Updated = DateTime.Now;
-                var historyBody = "Ticket created. <br> Title: " + ticket.Title + "<br> Body: " + ticket.Description + "<br>" + "Priority: " + ticket.TicketPriority + ", Type: " + ticket.TicketType.Name + ", Status: " + ticket.TicketStatus.Name;
-                history.Ticket.Description = historyBody;
+                TicketPriorities pri = db.TicketPriority.Find(ticket.TicketPriorityId);
+                TicketStatuses status = db.TicketStatus.Find(ticket.TicketStatusId);
+                TicketTypes types = db.TicketType.Find(ticket.TicketTypeId);
+                var historyBody = "Ticket created. <br> Title: " + ticket.Title + "<br> Body: " + ticket.Description + "<br>" + "Priority: " + pri.Name + ", Type: " + types.Name + ", Status: " + status.Name;
+                history.NewValue = historyBody;
                 history.TicketId = ticket.Id;
                 db.Tickets.Add(ticket);
                 db.TicketHistory.Add(history);
@@ -232,7 +253,7 @@ namespace Bugtracker.Controllers
                     {
                         historyBody.AppendFormat("<br>Old Priority: {0} <br> New Priority: {1}", oldTicket.TicketPriority, ticket.TicketPriority);
                     }
-                    history.Ticket.Description = historyBody.ToString();
+                    history.NewValue = historyBody.ToString();
                     history.TicketId = ticket.Id;
                     db.TicketHistory.Add(history);
                 }
@@ -268,6 +289,7 @@ namespace Bugtracker.Controllers
             {
                 return HttpNotFound();
             }
+            ticket.TicketStatusId = 2; // Assigned
             AssignTicketUserViewModel AssignModel = new AssignTicketUserViewModel();
             AssignModel.TicketId = ticket.Id;
             AssignModel.TicketTitle = ticket.Title;
@@ -287,6 +309,7 @@ namespace Bugtracker.Controllers
                 AssignModel.TicketAssignedTo = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
             }
             AssignModel.UsersList = new SelectList(projectDevelopers, "Id", "LastName");
+            db.SaveChanges();
             return View(AssignModel);
         }
 
@@ -307,7 +330,7 @@ namespace Bugtracker.Controllers
             history.Updated = System.DateTime.Now;
             var user = db.Users.Find(UserId);
             var historyBody = "Ticket assigned to " + user.FirstName + " " + user.LastName + ". Ticket now Active.";
-            history.Ticket.Description = historyBody;
+            history.NewValue = historyBody;
             history.TicketId = ticket.Id;
             db.TicketHistory.Add(history);
             //send email to previous developer
@@ -327,9 +350,9 @@ namespace Bugtracker.Controllers
             }
             //Save to database
             db.Tickets.Attach(ticket);
-            db.Entry(ticket).Property("AssigneeId").IsModified = true;
-            db.Entry(ticket).Property("Status").IsModified = true;
-            db.Entry(ticket).Property("Modified").IsModified = true;
+            db.Entry(ticket).Property("AssignedToUserId").IsModified = true;
+            db.Entry(ticket).Property("TicketStatusId").IsModified = true;
+            db.Entry(ticket).Property("Updated").IsModified = true;
             db.SaveChanges();
             //Send email to developer assigned
             var svc = new EmailService();
@@ -372,12 +395,12 @@ namespace Bugtracker.Controllers
             TicketHistories history = new TicketHistories();
             history.Updated = System.DateTime.Now;
             var historyBody = "Ticket Closed by " + user.FirstName + " " + user.LastName;
-            history.Ticket.Description = historyBody;
+            history.NewValue = historyBody;
             history.TicketId = ticket.Id;
             db.TicketHistory.Add(history);
             db.Tickets.Attach(ticket);
-            db.Entry(ticket).Property("Status").IsModified = true;
-            db.Entry(ticket).Property("Modified").IsModified = true;
+            db.Entry(ticket).Property("TicketStatusId").IsModified = true;
+            db.Entry(ticket).Property("Updated").IsModified = true;
             db.SaveChanges();
 
             await NotifyDeveloper(id, userId, ticket.AssignedToUserId);
@@ -423,7 +446,7 @@ namespace Bugtracker.Controllers
             TicketHistories history = new TicketHistories();
             history.Updated = System.DateTime.Now;
             var historyBody = "Ticket marked as Resolved by " + user.FirstName + " " + user.LastName;
-            history.Ticket.Description = historyBody;
+            history.NewValue = historyBody;
             history.TicketId = ticket.Id;
             db.TicketHistory.Add(history);
             //Save ticket changes to database

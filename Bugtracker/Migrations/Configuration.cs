@@ -59,23 +59,23 @@ namespace Bugtracker.Migrations
                     userManager.AddToRole(userId, "Project Manager");
                 }
 
-                if (!context.Roles.Any(r => r.Name == "Project Manager 2"))
-                {
-                    roleManager.Create(new IdentityRole { Name = "Project Manager 2" });
-                }
-                if (!context.Users.Any(u => u.Email == "projectmanager2@dispostable.com"))
-                {
-                    userManager.Create(new ApplicationUser
-                    {
-                        UserName = "projectmanager2@dispostable.com",
-                        Email = "projectmanager2@dispostable.com",
-                        FirstName = "Project2",
-                        LastName = "Manager2",
-                        DisplayName = "Project Manager2"
-                    }, "Pmanager#2");
-                    var userId = userManager.FindByEmail("projectmanager2@dispostable.com").Id;
-                    userManager.AddToRole(userId, "Project Manager2");
-                }
+                //if (!context.Roles.Any(r => r.Name == "Project Manager 2"))
+                //{
+                //    roleManager.Create(new IdentityRole { Name = "Project Manager 2" });
+                //}
+                //if (!context.Users.Any(u => u.Email == "projectmanager2@dispostable.com"))
+                //{
+                //    userManager.Create(new ApplicationUser
+                //    {
+                //        UserName = "projectmanager2@dispostable.com",
+                //        Email = "projectmanager2@dispostable.com",
+                //        FirstName = "Project2",
+                //        LastName = "Manager2",
+                //        DisplayName = "Project Manager2"
+                //    }, "Pmanager#2");
+                //    var userId = userManager.FindByEmail("projectmanager2@dispostable.com").Id;
+                //    userManager.AddToRole(userId, "Project Manager2");
+                //}
                 if (!context.Roles.Any(r => r.Name == "Developer"))
                 {
                     roleManager.Create(new IdentityRole { Name = "Developer" });

@@ -168,9 +168,9 @@ namespace Bugtracker.Controllers
                 model.ProjectTitle = project.Name;
                 var currentUsers = helper.ListUsers(model.ProjectId);
                 model.UsersList = currentUsers;
-                model.CurrentUsers = new SelectList(currentUsers, "Id", "LastName");
+                model.CurrentUsers = new SelectList(currentUsers, "Id", "DisplayName");
                 var absentUsers = helper.ListAbsentUsers(model.ProjectId);
-                model.AbsentUsers = new SelectList(absentUsers, "Id", "LastName");
+                model.AbsentUsers = new SelectList(absentUsers, "Id", "DisplayName");
                 return View(model);
             }
         }
