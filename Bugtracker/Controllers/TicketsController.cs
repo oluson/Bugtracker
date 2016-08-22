@@ -451,8 +451,8 @@ namespace Bugtracker.Controllers
             db.TicketHistory.Add(history);
             //Save ticket changes to database
             db.Tickets.Attach(ticket);
-            db.Entry(ticket).Property("Status").IsModified = true;
-            db.Entry(ticket).Property("Modified").IsModified = true;
+            db.Entry(ticket).Property("TicketStatusId").IsModified = true;
+            db.Entry(ticket).Property("Updated").IsModified = true;
             db.SaveChanges();
             //Send email to project managers
             ProjectRolesHelper helper = new ProjectRolesHelper(db);
@@ -498,26 +498,26 @@ namespace Bugtracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddComment([Bind(Include = "Id,TicketId,Content")] TicketComments comment)
+        public async Task<ActionResult> AddComment([Bind(Include = "Id,TicketId,Comment")] TicketComments Ticketcomment)
         {
             if (ModelState.IsValid)
             {
-                comment.UserId = User.Identity.GetUserId();
-                comment.Created = System.DateTime.Now;
-                db.TicketComment.Add(comment);
+                Ticketcomment.UserId = User.Identity.GetUserId();
+                Ticketcomment.Created = System.DateTime.Now;
+                db.TicketComment.Add(Ticketcomment);
                 db.SaveChanges();
 
-                var ticket = db.Tickets.Find(comment.TicketId);
+                var ticket = db.Tickets.Find(Ticketcomment.TicketId);
                 var assigneeId = ticket.AssignedToUserId;
-                await NotifyDeveloper(comment.TicketId, comment.UserId, assigneeId);
+                await NotifyDeveloper(Ticketcomment.TicketId, Ticketcomment.UserId, assigneeId);
 
-                return RedirectToAction("Details", new { id = comment.TicketId });
+                return RedirectToAction("Details", new { id = Ticketcomment.TicketId });
             }
             return View();
         }
 
         // POST: Delete Comment
-        [Authorize]
+        [Authorize( Roles ="Admin")]
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteComment(int id)
@@ -556,7 +556,7 @@ namespace Bugtracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AddAttachment([Bind(Include = "Id,TicketId,Description,MediaURL")] TicketAttachments attachment, HttpPostedFileBase image)
+        public async Task<ActionResult> AddAttachment([Bind(Include = "Id,TicketId,Description,FilePath")] TicketAttachments attachment, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
@@ -575,20 +575,22 @@ namespace Bugtracker.Controllers
                         return View();
                     }
                 }
+                attachment.FileUrl = attachment.FilePath;
+                attachment.Created = DateTime.Now;
                 attachment.UserId = User.Identity.GetUserId();
                 db.TicketAttachment.Add(attachment);
                 db.SaveChanges();
 
                 var ticket = db.Tickets.Find(attachment.TicketId);
                 await NotifyDeveloper(attachment.TicketId, attachment.UserId, ticket.AssignedToUserId);
-
+                
                 return RedirectToAction("Details", new { id = attachment.TicketId });
             }
             return View();
         }
 
         // POST: Delete Attachment
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         [HttpPost, ActionName("DeleteAttachment")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteAttachment(int id)
