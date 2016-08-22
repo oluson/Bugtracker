@@ -79,7 +79,7 @@ namespace Bugtracker.Controllers
         }
 
         [Authorize]
-        // GET: Tickets/Create
+        // POST: Tickets/Create
         public ActionResult Create(int? id)
         {
             if (id == null)
@@ -110,9 +110,10 @@ namespace Bugtracker.Controllers
             ViewBag.Priorities = new SelectList(priority, "Value", "Text");
             ViewBag.Types = new SelectList(types, "Value", "Text");
             ViewBag.ProjectId = id;
-            ViewBag.ProjectTitle = project.Title;
+            ViewBag.ProjectTitle = project.Title;            
             return View();
         }
+
         // POST: Tickets/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -495,6 +496,7 @@ namespace Bugtracker.Controllers
             return View();
         }
 
+        //POST: Tickets/AddComment
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
