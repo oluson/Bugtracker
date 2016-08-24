@@ -45,13 +45,14 @@ namespace Bugtracker.Controllers
             }
             TicketsHelper ticketHelper = new TicketsHelper(db);
             var userId = User.Identity.GetUserId();
-            if (ticketHelper.HasTicketPermission(userId, ticket.Id))
-            {
-                ViewBag.UserId = User.Identity.GetUserId();
-                return View(ticket);
-            }
-            TempData["Error"] = "Sorry, you do not have permission to view that ticket.";
-            return RedirectToAction("Index");
+            return View(ticket);
+            //if (ticketHelper.HasTicketPermission(userId, ticket.Id))
+            //{
+            //    ViewBag.UserId = User.Identity.GetUserId();
+            //    return View(ticket);
+            //}
+            //TempData["Error"] = "Sorry, you do not have permission to view that ticket.";
+            //return RedirectToAction("Index");
         }
 
         // GET: Tickets/History/5
@@ -110,7 +111,7 @@ namespace Bugtracker.Controllers
             ViewBag.Priorities = new SelectList(priority, "Value", "Text");
             ViewBag.Types = new SelectList(types, "Value", "Text");
             ViewBag.ProjectId = id;
-            ViewBag.ProjectTitle = project.Title;            
+            ViewBag.ProjectTitle = project.Title;
             return View();
         }
 
@@ -130,7 +131,7 @@ namespace Bugtracker.Controllers
                 }
                 ticket.Created = System.DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
-               // ticket.TicketStatus = new TicketStatuses();
+                // ticket.TicketStatus = new TicketStatuses();
                 ticket.TicketStatusId = 1;
                 //ticket.TicketPriority = new TicketPriorities();
                 TicketHistories history = new TicketHistories();
@@ -204,12 +205,37 @@ namespace Bugtracker.Controllers
                 TempData["Error"] = "Sorry, you do not have permission to access that ticket.";
                 return RedirectToAction("Index");
             }
+            var dbUserRoles = db.TicketPriority.ToList();
+            var priorities = db.TicketPriority
+                        .Select(x =>
+                                new SelectListItem
+                                {
+                                    Value = x.Id.ToString(),
+                                    Text = x.Name
+                                });
+            var types = db.TicketType
+                       .Select(x =>
+                               new SelectListItem
+                               {
+                                   Value = x.Id.ToString(),
+                                   Text = x.Name
+                               });
+
+
             var project = db.Project.FirstOrDefault(p => p.Id == ticket.ProjectId);
             var ProjectTitle = project.Title;
             var type = db.TicketType.Find(ticket.TicketTypeId);
             var TicketType = type.Name;
+
+            var priority = db.TicketPriority.Find(ticket.TicketPriorityId);
+
             ViewBag.ProjectTitle = ProjectTitle;
             ViewBag.TicketType = TicketType;
+            ViewBag.Priorities = new SelectList(priorities, "Value", "Text");
+            ViewBag.Types = new SelectList(types, "Value", "Text");
+            ViewBag.ProjectId = id;
+            ViewBag.PriorityName = priority.Name;
+
             return View(ticket);
         }
 
@@ -219,7 +245,7 @@ namespace Bugtracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Created,Title,Body,Priority,Type, AssigneeId")] Tickets ticket)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,ProjectId,Title,Description,TicketPriorityId,TicketTypeId")] Tickets ticket)
         {
             if (ModelState.IsValid)
             {
@@ -228,10 +254,16 @@ namespace Bugtracker.Controllers
                     ticket.Title = StringUtilities.Shorten(ticket.Description, 50);
                 }
                 ticket.Updated = System.DateTimeOffset.Now;
-                var userId = User.Identity.GetUserId();
-                var user = db.Users.Find(userId);
+                ticket.OwnerUserId = User.Identity.GetUserId();
+                // ticket.TicketStatus = new TicketStatuses();
+                //ticket.TicketStatusId = 1;
+                //ticket.TicketPriority = new TicketPriorities();
+                TicketPriorities pri = db.TicketPriority.Find(ticket.TicketPriorityId);
+                TicketStatuses status = db.TicketStatus.Find(ticket.TicketStatusId);
+                TicketTypes types = db.TicketType.Find(ticket.TicketTypeId);
+                var user = db.Users.Find(ticket.OwnerUserId);
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-                if (oldTicket.Title != ticket.Title || oldTicket.Description != ticket.Description || oldTicket.TicketType.Name != ticket.TicketType.Name || oldTicket.TicketPriority != ticket.TicketPriority)
+                if (oldTicket.Title != ticket.Title || oldTicket.Description != ticket.Description || oldTicket.TicketType.Name != types.Name || oldTicket.TicketPriority.Name != pri.Name)
                 {
                     TicketHistories history = new TicketHistories();
                     history.Updated = DateTime.Now;
@@ -246,13 +278,13 @@ namespace Bugtracker.Controllers
                     {
                         historyBody.AppendFormat("<br>Old Body Content: {0} <br> New Body Content: {1}", oldTicket.Description, ticket.Description);
                     }
-                    if (oldTicket.TicketType.Name != ticket.TicketType.Name)
+                    if (oldTicket.TicketType.Name != types.Name)
                     {
-                        historyBody.AppendFormat("<br>Old Type: {0} <br> New Type: {1}", oldTicket.TicketType.Name, ticket.TicketType.Name);
+                        historyBody.AppendFormat("<br>Old Type: {0} <br> New Type: {1}", oldTicket.TicketType.Name, types.Name);
                     }
-                    if (oldTicket.TicketPriority != ticket.TicketPriority)
+                    if (oldTicket.TicketPriority.Name != pri.Name)
                     {
-                        historyBody.AppendFormat("<br>Old Priority: {0} <br> New Priority: {1}", oldTicket.TicketPriority, ticket.TicketPriority);
+                        historyBody.AppendFormat("<br>Old Priority: {0} <br> New Priority: {1}", oldTicket.TicketPriority.Name, pri.Name);
                     }
                     history.NewValue = historyBody.ToString();
                     history.TicketId = ticket.Id;
@@ -263,17 +295,20 @@ namespace Bugtracker.Controllers
                     ModelState.AddModelError("", "Error: No changes have been made.");
                     return View(ticket);
                 }
+
                 db.Tickets.Attach(ticket);
                 //db.Entry(ticket).State = EntityState.Modified;
-                db.Entry(ticket).Property("Modified").IsModified = true;
+                db.Entry(ticket).Property("Updated").IsModified = true;
                 db.Entry(ticket).Property("Title").IsModified = true;
-                db.Entry(ticket).Property("Body").IsModified = true;
-                db.Entry(ticket).Property("Priority").IsModified = true;
+                db.Entry(ticket).Property("Description").IsModified = true;
+                //db.Entry(ticket).Property("Priority").IsModified = true;
+
                 db.SaveChanges();
 
-                await NotifyDeveloper(ticket.Id, userId, ticket.AssignedToUserId);
+               // await NotifyDeveloper(ticket.Id, user.Id, ticket.AssignedToUserId);
                 return RedirectToAction("Details", new { id = ticket.Id });
             }
+
             return View(ticket);
         }
 
@@ -519,7 +554,7 @@ namespace Bugtracker.Controllers
         }
 
         // POST: Delete Comment
-        [Authorize( Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("DeleteComment")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteComment(int id)
@@ -585,14 +620,14 @@ namespace Bugtracker.Controllers
 
                 var ticket = db.Tickets.Find(attachment.TicketId);
                 await NotifyDeveloper(attachment.TicketId, attachment.UserId, ticket.AssignedToUserId);
-                
+
                 return RedirectToAction("Details", new { id = attachment.TicketId });
             }
             return View();
         }
 
         // POST: Delete Attachment
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("DeleteAttachment")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteAttachment(int id)

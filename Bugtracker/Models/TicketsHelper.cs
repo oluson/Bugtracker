@@ -40,12 +40,14 @@ namespace Bugtracker.Controllers
             else if (userRoles.Contains("Developer"))
             {
                 //tickets where AssigneedId == userId
-                tickets = db.Tickets.Where(t => t.OwnerUserId == userId).Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
+                // tickets = db.Tickets.Where(t => t.OwnerUserId == userId).Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
+                tickets = db.Tickets.Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
             }
             else if (userRoles.Contains("Submitter"))
             {
                 //tickets where OwnerId == userID
-                tickets = db.Tickets.Where(t => t.OwnerUserId == userId).Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
+                //tickets = db.Tickets.Where(t => t.OwnerUserId == userId).Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
+                tickets = db.Tickets.Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).ToList();
             }
             return tickets;
         }

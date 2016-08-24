@@ -7,10 +7,10 @@ namespace Bugtracker.Models
 {
     public class DashboardViewModel
     {
-        public string Name { get; set; }
-        public string Id { get; set; }
-
-        public List<Projects> Projects { get; set; }
-        public List<Tickets> Tickets { get; set; }
+        public IEnumerable<Tickets> Tickets { get; set; }
+        public IEnumerable<TicketAttachments> Attachments { get; set; }
+        public IEnumerable<TicketComments> Comments { get; set; }
+        public int ProjectsAmt { get; set; }
+        public string Projects { get; set; }
     }
 }

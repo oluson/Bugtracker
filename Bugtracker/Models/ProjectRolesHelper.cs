@@ -12,7 +12,7 @@ namespace Bugtracker.Controllers
 
         public ProjectRolesHelper(ApplicationDbContext context)
         {
-            this.db = context;
+            db = context;
         }
 
         public void AssignUser(string userId, int projectId)

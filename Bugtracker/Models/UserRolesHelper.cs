@@ -16,9 +16,9 @@ namespace Bugtracker.Models
 
         public UserRolesHelper(ApplicationDbContext db)
         {
-            this.manager = new UserManager<ApplicationUser>(
+           this.manager = new UserManager<ApplicationUser>(
                 new UserStore<ApplicationUser>(db));
-            this.roleManager = new RoleManager<IdentityRole>(
+           this.roleManager = new RoleManager<IdentityRole>(
                 new RoleStore<IdentityRole>(db));
             this.db = db;
         }

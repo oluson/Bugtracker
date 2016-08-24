@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace Bugtracker.Controllers
 {
@@ -13,10 +14,69 @@ namespace Bugtracker.Controllers
         // private UserRolesHelper Urh = new UserRolesHelper(new ApplicationDbContext);
         public ActionResult Index()
         {
-            DashboardViewModel mo = new DashboardViewModel();
-            mo.Name = "Bugtracker";
+            var userId = User.Identity.GetUserId();
+            var tickets = new List<Tickets>();
+            var attachments = new List<TicketAttachments>();
+            var comments = new List<TicketComments>();
+            int projects = 0;
 
-            return View(mo);
+            if (User.IsInRole("Admin"))
+            {
+                tickets = db.Tickets.ToList();
+                attachments = db.TicketAttachment.Take(5).ToList();
+                projects = db.Project.Count();
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+            }
+            else if (User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer") && User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.Project.ProjectUsers.Contains(db.Users.Find(userId))).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+
+            var model = new DashboardViewModel()
+            {
+                Tickets = tickets,
+                Attachments = attachments,
+                Comments = comments.Take(5),
+                ProjectsAmt = projects
+            };
+
+            return View("Dashboard", model);
         }
 
         public ActionResult About(string uid, string role)

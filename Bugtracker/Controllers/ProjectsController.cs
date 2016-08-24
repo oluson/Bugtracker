@@ -6,6 +6,7 @@ using System.Net;
 using System.Web.Mvc;
 using Bugtracker.Models;
 using Microsoft.AspNet.Identity;
+using System;
 
 namespace Bugtracker.Controllers
 {
@@ -197,15 +198,28 @@ namespace Bugtracker.Controllers
             var tickets = db.Tickets.Where(t => t.AssignedToUserId == RemoveUserId && t.ProjectId == ProjectId).ToList();
             foreach (var ticket in tickets)
             {
+                var user = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
+
                 ticket.AssignedToUserId = null;
                 ticket.TicketStatus.Name = "Unassigned";
                 ticket.Updated = System.DateTimeOffset.Now;
                 db.Tickets.Attach(ticket);
-                db.Entry(ticket).Property("Modified").IsModified = true;
-                db.Entry(ticket).Property("AssigneeId").IsModified = true;
-                db.Entry(ticket).Property("Status").IsModified = true;
+                db.Entry(ticket).Property("Updated").IsModified = true;
+                db.Entry(ticket).Property("AssignedToUserId").IsModified = true;
+                db.Entry(ticket).Property("TicketStatusId").IsModified = true;
+
+                TicketHistories history = new TicketHistories();
+                history.Updated = DateTime.Now;
+                TicketPriorities pri = db.TicketPriority.Find(ticket.TicketPriorityId);
+                TicketStatuses status = db.TicketStatus.Find(ticket.TicketStatusId);
+                TicketTypes types = db.TicketType.Find(ticket.TicketTypeId);
+                var historyBody = "Ticket unassigned from " + user + ". Ticket now Inactive.";
+                history.NewValue = historyBody;
+                history.TicketId = ticket.Id;
+                db.TicketHistory.Add(history);
                 db.SaveChanges();
             }
+
             helper.RemoveUser(RemoveUserId, ProjectId);
             db.SaveChanges();
             return RedirectToAction("AssignUsers", new { id = ProjectId });
