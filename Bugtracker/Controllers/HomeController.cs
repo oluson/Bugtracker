@@ -10,8 +10,7 @@ namespace Bugtracker.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-        // private UserRolesHelper Urh = new UserRolesHelper(new ApplicationDbContext);
+        private ApplicationDbContext db = new ApplicationDbContext();       
         public ActionResult Index()
         {
             var userId = User.Identity.GetUserId();
@@ -81,10 +80,6 @@ namespace Bugtracker.Controllers
 
         public ActionResult About(string uid, string role)
         {
-            //UserRolesHelper helper = new UserRolesHelper();
-            //helper.AddUserToRole(uid, role);
-
-
             return View();
         }
 
@@ -134,6 +129,6 @@ namespace Bugtracker.Controllers
             profile.TicketsResolved = resolved;
             profile.ProjectId = ProjectId;
             return View(profile);
-        }      
+        }
     }
 }
