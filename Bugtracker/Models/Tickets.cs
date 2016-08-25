@@ -21,7 +21,7 @@ namespace Bugtracker.Models
         public int Id { get; set; }
 
         public string Title { get; set; }
-
+        [AllowHtml]
         public string Description { get; set; }
 
         public DateTimeOffset Created { get; set; }

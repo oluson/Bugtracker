@@ -59,12 +59,29 @@ desired effect
             <!-- Logo -->
             <a href="index2.html" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>A</b>LT</span>
+                <span class="logo-mini"><b></b>BT</span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Admin</b>LTE</span>
+                <span class="logo-lg"><b></b>Bugtracker</span>
             </a>
             <!-- Header Navbar -->
             <nav class="navbar navbar-static-top" role="navigation">
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+
+                        <li>@Html.ActionLink("Tickets", "Index", "Tickets")</li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li>@Html.ActionLink("Role Manager", "ListUsers", "Admin")</li>
+                            <li>@Html.ActionLink("Projects", "Index", "Projects")</li>
+                        }
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            
                 <!-- Sidebar toggle button-->
                 <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                     <span class="sr-only">Toggle navigation</span>
@@ -312,10 +329,10 @@ desired effect
         <footer class="main-footer">
             <!-- To the right -->
             <div class="pull-right hidden-xs">
-                Anything you want
+                Ibere kin so nise
             </div>
             <!-- Default to the left -->
-            <strong>Copyright &copy; 2016 <a href="https://oluson.azurewebsites.net">Oluson</a>.</strong> All rights reserved.
+            <strong>Copyright &copy; 2016 <a href="https://oluson.azurewebsites.net" target="_blank">Oluson</a>.</strong> All rights reserved.
         </footer>
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">

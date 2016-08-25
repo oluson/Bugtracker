@@ -129,7 +129,7 @@ namespace Bugtracker.Controllers
                 {
                     ticket.Title = StringUtilities.Shorten(ticket.Description, 50);
                 }
-                ticket.Created = System.DateTimeOffset.Now;
+                ticket.Created = DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 // ticket.TicketStatus = new TicketStatuses();
                 ticket.TicketStatusId = 1;
@@ -156,7 +156,7 @@ namespace Bugtracker.Controllers
                     var msg = new IdentityMessage();
                     msg.Destination = pm;
                     msg.Subject = "Bug Tracker: Ticket Created";
-                    msg.Body = user.FirstName + " " + user.LastName + " has created the ticket '" + ticket.Title + "'. To assign this ticket to a user, please visit https://epalmer-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id;
+                    msg.Body = user.FirstName + " " + user.LastName + " has created the ticket '" + ticket.Title + "'. To assign this ticket to a user, please visit https://oluson-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id;
                     await svc.SendAsync(msg);
                 }
 
@@ -167,18 +167,18 @@ namespace Bugtracker.Controllers
         }
 
         //Send Email to Ticket's Assigned Developer
-        public async Task<bool> NotifyDeveloper(int ticketId, string editorId, string assigneeId)
+        public async Task<bool> NotifyDeveloper(int ticketId, string editorId, string assignedToUserId)
         {
             var user = db.Users.Find(editorId);
             var ticket = db.Tickets.Find(ticketId);
-            var developer = db.Users.Find(assigneeId);
+            var developer = db.Users.Find(assignedToUserId);
             if (user != null && ticket != null && developer != null)
             {
                 var svc = new EmailService();
                 var msg = new IdentityMessage();
                 msg.Destination = developer.Email;
-                msg.Subject = "Bug Tracker: Ticket Modified";
-                msg.Body = user.FirstName + " " + user.LastName + " has modified the ticket '" + ticket.Title + "'. To view this ticket, please visit https://epalmer-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If you have any questions, " + user.FirstName + " " + user.LastName + " can be contacted at " + user.Email;
+                msg.Subject = "Bugtracker: Ticket Modified";
+                msg.Body = user.FirstName + " " + user.LastName + " has modified the ticket '" + ticket.Title + "'. To view this ticket, please visit https://oluson-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If you have any questions, " + user.FirstName + " " + user.LastName + " can be contacted at " + user.Email;
                 await svc.SendAsync(msg);
             }
 
@@ -305,7 +305,7 @@ namespace Bugtracker.Controllers
 
                 db.SaveChanges();
 
-               // await NotifyDeveloper(ticket.Id, user.Id, ticket.AssignedToUserId);
+                await NotifyDeveloper(ticket.Id, user.Id, ticket.AssignedToUserId);
                 return RedirectToAction("Details", new { id = ticket.Id });
             }
 
@@ -375,7 +375,7 @@ namespace Bugtracker.Controllers
                 var svc2 = new EmailService();
                 var msg2 = new IdentityMessage();
                 msg2.Destination = user.Email;
-                msg2.Subject = "Bug Tracker: Ticket Reassigned";
+                msg2.Subject = "Bugtracker: Ticket Reassigned";
                 msg2.Body = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName + " has reassigned the ticket '" + ticket.Title + "' to another developer. You are no longer responsible for this ticket. If you have any questions regarding this ticket, " + ticket.OwnerUser.FirstName + " can be contacted at " + ticket.OwnerUser.Email;
                 await svc2.SendAsync(msg2);
             }
@@ -394,8 +394,8 @@ namespace Bugtracker.Controllers
             var svc = new EmailService();
             var msg = new IdentityMessage();
             msg.Destination = user.Email;
-            msg.Subject = "Bug Tracker: New Ticket Assigned";
-            msg.Body = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName + " has assigned you the ticket '" + ticket.Title + "'. To view this ticket, please visit https://epalmer-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If you have any questions regarding this ticket, " + ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName + " can be contacted at " + ticket.OwnerUser.Email;
+            msg.Subject = "Bugtracker: New Ticket Assigned";
+            msg.Body = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName + " has assigned you the ticket '" + ticket.Title + "'. To view this ticket, please visit https://oluson-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If you have any questions regarding this ticket, " + ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName + " can be contacted at " + ticket.OwnerUser.Email;
             await svc.SendAsync(msg);
 
             return RedirectToAction("Details", new { id = TicketId });
@@ -499,7 +499,7 @@ namespace Bugtracker.Controllers
                 var msg = new IdentityMessage();
                 msg.Destination = pm;
                 msg.Subject = "Bug Tracker: Ticket Resolved";
-                msg.Body = user.FirstName + " " + user.LastName + " has marked the ticket '" + ticket.Title + "' as Resolved. To close this ticket, please visit https://epalmer-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If there are still issues left to resolve on the ticket, the ticket's developer can be reached at " + ticket.AssignedToUser.Email;
+                msg.Body = user.FirstName + " " + user.LastName + " has marked the ticket '" + ticket.Title + "' as Resolved. To close this ticket, please visit https://oluson-bugtracker.azurewebsites.net/Tickets/Details/" + ticket.Id + " If there are still issues left to resolve on the ticket, the ticket's developer can be reached at " + ticket.AssignedToUser.Email;
                 await svc.SendAsync(msg);
             }
 

@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Dashboard";
 }
-<h2>@User.Identity.Name Dashboard</h2>
+@*<h2>@User.Identity.Name Dashboard</h2>*@
 <div class="row">
     <div class="col-md-8">
         <div class="row">
@@ -12,8 +12,8 @@
                 <div class="box-info warning">
                     <div class="icon-box">
                         <span class="fa-stack">
-                            <i class="fa fa-circle fa-stack-2x text-white"></i>
-                            <i class="fa fa-puzzle-piece fa-stack-1x warning"></i>
+                            @*<i class="fa fa-circle fa-stack-2x text-white"></i>*@
+                            @*<i class="fa fa-puzzle-piece fa-stack-1x warning"></i>*@
                         </span>
                     </div>
                     <a href=@Url.Action("Index", "Projects")>
@@ -30,8 +30,8 @@
                 <div class="box-info warning">
                     <div class="icon-box">
                         <span class="fa-stack">
-                            <i class="fa fa-circle fa-stack-2x text-white"></i>
-                            <i class="fa fa-ticket fa-stack-1x warning"></i>
+                            @*<i class="fa fa-circle fa-stack-2x text-white"></i>*@
+                            @*<i class="fa fa-ticket fa-stack-1x warning"></i>*@
                         </span>
                     </div>
                     @if (User.IsInRole("Admin"))
@@ -46,6 +46,7 @@
                         <h3>@Model.Tickets.Count()</h3>
                         <p>Current Tickets</p>
                     </div>
+                </a>
                 </a>
                 <div class="clear"></div>
         </div>

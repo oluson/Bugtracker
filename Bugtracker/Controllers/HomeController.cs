@@ -134,6 +134,6 @@ namespace Bugtracker.Controllers
             profile.TicketsResolved = resolved;
             profile.ProjectId = ProjectId;
             return View(profile);
-        }
+        }      
     }
 }
