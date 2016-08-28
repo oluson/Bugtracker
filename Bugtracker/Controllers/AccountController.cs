@@ -6,6 +6,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Bugtracker.Models;
+using System.Collections.Generic;
 
 namespace Bugtracker.Controllers
 {
@@ -19,21 +20,20 @@ namespace Bugtracker.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
-
         public ApplicationSignInManager SignInManager
         {
             get
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -55,14 +55,13 @@ namespace Bugtracker.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return View("LoginNew");
         }
 
         //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
@@ -84,9 +83,69 @@ namespace Bugtracker.Controllers
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                    return View("LoginNew", model);
             }
         }
+
+
+        // POST: /Account/LoginGuestSubmitter
+        [AllowAnonymous]
+        public async Task<ActionResult> LoginGuestSubmitter()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("GuestSubmitter");
+
+            var result = await SignInManager.PasswordSignInAsync("GuestSubmitter", "Password#1", false, shouldLockout: false);
+
+            return RedirectToAction("Index", "Tickets");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [AllowAnonymous]
+        public async Task<ActionResult> LoginGuestDeveloper()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("GuestDeveloper");
+
+            var result = await SignInManager.PasswordSignInAsync("GuestDeveloper", "Password#1", false, shouldLockout: false);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [AllowAnonymous]
+        public async Task<ActionResult> LoginGuestProjectManager()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("GuestPM");
+
+            var result = await SignInManager.PasswordSignInAsync("GuestPM", "Password#1", false, shouldLockout: false);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        // POST: /Account/LoginGuestSuperUser
+        [AllowAnonymous]
+        public async Task<ActionResult> LoginGuestAdministrator()
+        {
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, change to shouldLockout: true
+            var user = await UserManager.FindByNameAsync("GuestAdmin");
+
+            var result = await SignInManager.PasswordSignInAsync("GuestAdmin", "Password#1", false, shouldLockout: false);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+
+
+
+
 
         //
         // GET: /Account/VerifyCode
@@ -117,7 +176,7 @@ namespace Bugtracker.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -136,7 +195,7 @@ namespace Bugtracker.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View();
+            return View("RegisterNew");
         }
 
         //
@@ -152,11 +211,11 @@ namespace Bugtracker.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                  
+
                     //This Assigns the role of "Submitter" Upon Registration
 
                     UserManager.AddToRole(user.Id, "Submitter");
@@ -164,8 +223,8 @@ namespace Bugtracker.Controllers
                     // Send an email with this link
 
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -215,10 +274,10 @@ namespace Bugtracker.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                 await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -435,7 +494,7 @@ namespace Bugtracker.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login");
         }
 
         //

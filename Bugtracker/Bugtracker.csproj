@@ -298,10 +298,16 @@
     <Content Include="dist\img\credit\visa.png" />
     <Content Include="dist\img\default-50x50.gif" />
     <Content Include="dist\img\icons.png" />
+    <Content Include="dist\img\photo-1.jpg" />
+    <Content Include="dist\img\photo-2.jpg" />
+    <Content Include="dist\img\photo-3.jpg" />
+    <Content Include="dist\img\photo-4.jpg" />
     <Content Include="dist\img\photo1.png" />
     <Content Include="dist\img\photo2.png" />
     <Content Include="dist\img\photo3.jpg" />
     <Content Include="dist\img\photo4.jpg" />
+    <Content Include="dist\img\portfolio2.jpg" />
+    <Content Include="dist\img\user.png" />
     <Content Include="dist\img\user1-128x128.jpg" />
     <Content Include="dist\img\user2-160x160.jpg" />
     <Content Include="dist\img\user3-128x128.jpg" />
@@ -1151,6 +1157,7 @@
     <Content Include="plugins\timepicker\bootstrap-timepicker.js" />
     <Content Include="plugins\timepicker\bootstrap-timepicker.min.css" />
     <Content Include="plugins\timepicker\bootstrap-timepicker.min.js" />
+    <Content Include="Scripts\multiselect.js" />
     <Content Include="starter.html" />
     <Content Include="Views\Admin\ListUsers.cshtml">
       <BrowseToURL>~/Admin/</BrowseToURL>
@@ -1275,6 +1282,8 @@
     <Content Include="plugins\datatables\extensions\TableTools\Readme.md" />
     <Content Include="plugins\input-mask\phone-codes\phone-be.json" />
     <Content Include="plugins\input-mask\phone-codes\phone-codes.json" />
+    <Content Include="Views\Account\LoginNew.cshtml" />
+    <Content Include="Views\Account\RegisterNew.cshtml" />
     <None Include="Views\Projects\Admin.cshtml" />
     <Content Include="Views\Projects\UserRoleAdmin.cshtml" />
     <Content Include="Views\Tickets\Create.cshtml" />

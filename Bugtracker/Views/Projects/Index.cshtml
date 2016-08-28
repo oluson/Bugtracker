@@ -3,7 +3,11 @@
 
 
 
-
+<style>
+    .space {
+        margin-left:5px;
+    }
+</style>
 
 @model IEnumerable<Bugtracker.Models.Projects>
 
@@ -21,32 +25,104 @@
         <div class="admin-btns">
             @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
             {
-                @Html.ActionLink(" Create New ", "Create", "Projects", new { controller = "Projects", action = "Create" }, new { @class = "action-btn" })
-                @Html.ActionLink(" | All Projects ", "ViewAll", "Projects", new { controller = "Projects", action = "ViewAll" }, new { @class = "action-btn" })
+                @Html.ActionLink("Create New ", "Create", "Projects", new { controller = "Projects", action = "Create" }, new { @class = "btn btn-primary" })
+                @Html.ActionLink("All Projects ", "ViewAll", "Projects", new { controller = "Projects", action = "ViewAll" }, new { @class = "btn btn-info space" })
             }
         </div>
     </div>
 </div>
 <div class="container">
     <div class="row">
+        <div @*class="container*@ ">
+            <div @*class="row"*@>
+                <div @*class="col-md-12 content"*@>
+                    <p @*class="text-danger"*@>@TempData["Error"]</p>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Title
+                                </th>
+                                <th>
+                                    Description
+                                </th>
+                                <th>
+                                    Created
+                                </th>
+                                <th>
+                                    Deadline
+                                </th>
+                                @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+                                {
+                                    <th>
+                                        Action
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.ActionLink(item.Title, "Details", new { id = item.Id })
+                                    </td>
+                                    <td>
+                                        @item.Description
+                                    </td>
+                                    <td>
+                                        @item.Created.ToString("MMMM dd, yyyy h:mm t")
+                                    </td>
+                                    <td>
+                                        @item.Deadline.ToString("MMMM dd, yyyy h:mm t")
+                                    </td>
 
-        @foreach (var item in Model)
-            {
-            <div class="col-md-12">
-                    <h3>@Html.ActionLink(item.Title, "Details", new { id = item.Id })</h3>
-                    <p>Deadline: @item.Deadline.ToString("MMMM dd, yyyy h:mm t")M</p>
-            </div>
-            if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
-                {
-                <div class="col-md-12">
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-default" })
-                    @Html.ActionLink("Assign Users", "AssignUsers", new { id = item.Id }, new { @class = "btn btn-default" })
-                    @Html.ActionLink("Archive", "ArchiveProject", new { id = item.Id }, new { @class = "btn btn-default" })
+                                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+                                    {
+                                        <td>
+                                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" })
+                                            @Html.ActionLink("Assign Users", "AssignUsers", new { id = item.Id }, new { @class = "btn btn-success" })
+                                            @Html.ActionLink("Archive", "ArchiveProject", new { id = item.Id }, new { @class = "btn btn-warning" })
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
                 </div>
-                <hr />
-            }
-        }
-
+            </div>
+        </div>
+        @*@foreach (var item in Model)
+        {
+            <div class="example-modal">
+                <div class="modal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">@Html.ActionLink(item.Title, "Details", new { id = item.Id })</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p><h3>@Html.ActionLink(item.Title, "Details", new { id = item.Id })</h3>
+                                <p>Deadline: @item.Deadline.ToString("MMMM dd, yyyy h:mm t")M</p>
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+                                {
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-default" })
+                                    @Html.ActionLink("Assign Users", "AssignUsers", new { id = item.Id }, new { @class = "btn btn-default" })
+                                    @Html.ActionLink("Archive", "ArchiveProject", new { id = item.Id }, new { @class = "btn btn-default" })
+                                    @*<button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }*@
     </div>
 </div>
 

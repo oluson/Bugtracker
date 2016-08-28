@@ -24,14 +24,82 @@ namespace Bugtracker.Controllers
             var projects = new List<Projects>();
             ProjectRolesHelper helper = new ProjectRolesHelper(db);
             projects = helper.ListProjects(userId);
-
+            SetDashboard();
             return View(projects.Where(p => p.Archived == false).OrderBy(p => p.Deadline));
         }
 
+        private void SetDashboard()
+        {
+            var userId = User.Identity.GetUserId();
+            var tickets = new List<Tickets>();
+            var attachments = new List<TicketAttachments>();
+            var comments = new List<TicketComments>();
+            int projects = 0;
+
+            if (User.IsInRole("Admin"))
+            {
+                tickets = db.Tickets.ToList();
+                attachments = db.TicketAttachment.Take(5).ToList();
+                projects = db.Project.Count();
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+            }
+            else if (User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer") && User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.Project.ProjectUsers.Contains(db.Users.Find(userId))).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+
+            var model = new DashboardViewModel()
+            {
+                Tickets = tickets,
+                Attachments = attachments,
+                Comments = comments.Take(5),
+                ProjectsAmt = projects
+            };
+
+            ViewBag.DashboardModel = model;
+            //return View("Dashboard", model);
+        }
         //GET: Projects/ViewAll
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult ViewAll()
         {
+            SetDashboard();
             var projects = db.Project.Where(p => p.Archived == false).OrderBy(p => p.Deadline).ToList();
             return View(projects);
         }
@@ -41,6 +109,7 @@ namespace Bugtracker.Controllers
         public ActionResult Archive()
         {
             var projects = db.Project.Where(p => p.Archived == true).OrderBy(p => p.Deadline).ToList();
+            SetDashboard();
             return View(projects);
         }
 
@@ -62,6 +131,7 @@ namespace Bugtracker.Controllers
             ProjectRolesHelper projectHelper = new ProjectRolesHelper(db);
             var userRoles = userHelper.ListUserRoles(userId);
             var tickets = new List<Tickets>();
+            SetDashboard();
             if (userRoles.Contains("Admin") || (userRoles.Contains("Project Manager")))
             {
                 tickets = project.Tickets.ToList();
@@ -87,6 +157,7 @@ namespace Bugtracker.Controllers
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult Create()
         {
+            SetDashboard();
             return View();
         }
 
@@ -100,6 +171,7 @@ namespace Bugtracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                SetDashboard();
                 project.Name = project.Title;
                 ProjectRolesHelper helper = new ProjectRolesHelper(db);
                 project.Created = System.DateTimeOffset.Now;
@@ -123,6 +195,7 @@ namespace Bugtracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Projects project = db.Project.Find(id);
+            SetDashboard();
             if (project == null)
             {
                 return HttpNotFound();
@@ -142,6 +215,7 @@ namespace Bugtracker.Controllers
             {
                 db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
+                SetDashboard();
                 return RedirectToAction("Index");
             }
             return View(project);
@@ -157,6 +231,7 @@ namespace Bugtracker.Controllers
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
                 Projects project = db.Project.Find(id);
+                SetDashboard();
                 if (project == null)
                 {
                     return HttpNotFound();
@@ -185,6 +260,7 @@ namespace Bugtracker.Controllers
             ProjectRolesHelper helper = new ProjectRolesHelper(db);
             helper.AssignUser(AddUserId, ProjectId);
             db.SaveChanges();
+            SetDashboard();
             return RedirectToAction("AssignUsers", new { id = ProjectId });
         }
 
@@ -196,6 +272,7 @@ namespace Bugtracker.Controllers
         {
             ProjectRolesHelper helper = new ProjectRolesHelper(db);
             var tickets = db.Tickets.Where(t => t.AssignedToUserId == RemoveUserId && t.ProjectId == ProjectId).ToList();
+            SetDashboard();
             foreach (var ticket in tickets)
             {
                 var user = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
@@ -234,6 +311,7 @@ namespace Bugtracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Projects project = db.Project.Find(id);
+            SetDashboard();
             if (project == null)
             {
                 return HttpNotFound();
@@ -252,6 +330,7 @@ namespace Bugtracker.Controllers
             db.Project.Attach(project);
             db.Entry(project).Property("Archived").IsModified = true;
             db.SaveChanges();
+            SetDashboard();
             return RedirectToAction("Index");
         }
 

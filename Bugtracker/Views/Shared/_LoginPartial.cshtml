@@ -1,22 +1,94 @@
 ﻿@using Microsoft.AspNet.Identity
-@if (Request.IsAuthenticated)
-{
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+@using Bugtracker.Controllers;
+@*@if (Request.IsAuthenticated)
     {
-    @Html.AntiForgeryToken()
+        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+        {
+            @Html.AntiForgeryToken()
 
-    <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-        </li>
-        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-    </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                </li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+            </ul>
+        }
     }
-}
-else
-{
-    <ul class="nav navbar-nav navbar-right">
-        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    else
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        </ul>
+    }*@
+<!-- Menu Toggle Button -->
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    <!-- The user image in the navbar-->
+    <img src="~/dist/img/user.png" class="user-image" alt="User Image" />
+    <!-- hidden-xs hides the username on small devices so only the image appears. -->
+    @if (User.Identity.IsAuthenticated)
+    {
+        <span class="hidden-xs">@User.Identity.GetDisplayName()</span>
+    }
+</a>
+<ul class="dropdown-menu">
+    <!-- The user image in the menu -->
+    <li class="user-header">
+        <img src="~/dist/img/user.png" class="img-circle" alt="User Image" />
+        <p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                @User.Identity.GetDisplayName()
+            }-
+            @foreach (var role in @User.Identity.GetUserRole())
+            {
+                @role
+            }
+         </p>
+        </li>
+        <!-- Menu Body -->
+        <li class="user-body">
+            <div class="row">
+                <div class="col-xs-4 text-center">
+                    <a href="#">Projects</a>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <a href="#"></a>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <a href="#">Tickets</a>
+                </div>
+            </div>
+            <!-- /.row -->
+        </li>
+        <!-- Menu Footer-->
+        @if (Request.IsAuthenticated)
+        {
+            <li class="user-footer">
+                <div class="pull-left">
+                    <a href="@Url.Action("UserProfile", "Home")" class="btn btn-default btn-flat">Profile</a>
+                </div>
+                <div class="pull-right">
+                    @*<a href="#" class="btn btn-default btn-flat">Sign out</a>*@
+                    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <a href="javascript:document.getElementById('logoutForm').submit()" class="btn btn-default btn-flat">Sign out</a>
+                    }
+
+                </div>
+            </li>
+        }
+        else
+        {
+            <li class="user-footer">
+                <div class="pull-left">
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-default btn-flat">Register</a>
+                </div>
+                <div class="pull-right">
+                    @*<a href="#" class="btn btn-default btn-flat">Sign out</a>*@
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-default btn-flat">Log in</a>
+                </div>
+            </li>
+        }
     </ul>
-}

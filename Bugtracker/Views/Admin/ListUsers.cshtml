@@ -1,8 +1,54 @@
 ﻿@model Bugtracker.Models.UsersListViewModel
 
- <!--CSS-->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css"/>
+<!--CSS-->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" />
+<style>
+    .multiselect-container {
+        position: absolute;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
 
+        .multiselect-container .input-group {
+            margin: 5px;
+        }
+
+        .multiselect-container > li {
+            padding: 0;
+        }
+
+            .multiselect-container > li > a.multiselect-all label {
+                font-weight: bold;
+            }
+
+            .multiselect-container > li > label.multiselect-group {
+                margin: 0;
+                padding: 3px 20px 3px 10px;
+                height: 100%;
+                font-weight: bold;
+            }
+
+            .multiselect-container > li > a > label {
+                margin: 0;
+                height: 100%;
+                cursor: pointer;
+                font-weight: normal;
+            }
+
+                .multiselect-container > li > a > label.radio, .multiselect-container > li > a > label.checkbox {
+                    margin: 0;
+                }
+
+                .multiselect-container > li > a > label > input[type="checkbox"] {
+                    margin-bottom: 5px;
+                }
+
+    .btn-group > .btn-group:nth-child(2) > .multiselect.btn {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+</style>
 @{
     ViewBag.Title = "Users List";
 }
@@ -21,14 +67,14 @@
                         <th>
                             Name
                         </th>
-                        <th>
+                        <th style="display:none">
                             Role
                         </th>
                         <th>
                             Projects
                         </th>
                         <th>
-                            Action
+                            Manage Role
                         </th>
                     </tr>
                 </thead>
@@ -41,7 +87,7 @@
                             <td>
                                 @item.Name
                             </td>
-                            <td>
+                            <td class="role" style="display:none">
                                 @{ var roles = item.Roles; }
                                 @foreach (var role in roles)
                                 {
@@ -55,10 +101,17 @@
                                     <p>@project</p>
                                 }
                             </td>
-                            <td>
+                            <td class="sel" uid="@item.Id">
                                 @if (ViewContext.HttpContext.User.IsInRole("Admin"))
                                 {
-                                    @Html.ActionLink("Modify User Roles", "EditUser", new { id = @item.Id }) }
+                                    <select type="text" class="form-control multiselect multiselect-icon" multiple="multiple" role="multiselect">
+                                        <option value="Admin" data-icon="fa fa-adn">Admin</option>
+                                        <option value="Project Manager" data-icon="fa fa-user">Project Manager</option>
+                                        <option value="Developer" data-icon="fa fa-desktop">Developer</option>
+                                        <option value="Submitter" data-icon="glyphicon-pencil">Submitter</option>
+                                    </select>
+                                    @*@Html.ActionLink("Modify User Roles", "EditUser", new { id = @item.Id }, new { @class = "btn btn-warning" }) }*@
+                                }
 
                             </td>
                         </tr>
@@ -86,30 +139,79 @@
 <!--jQuery-->
 <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 @*@Scripts.Render("~/bundles/jquery")*@
+
 <!--DataTables-->
 <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
 
 <script>
     $('.table').DataTable();
 </script>
-
-
-
-
-
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.table').dataTable().columnFilter({
-                aoColumns: [
-                    { type: "text" },
-                    { type: "select", values: ['Admin', 'Project Manager', 'Developer', 'Submitter'] },
-                    { type: "text" },
-                ]
-
-            });
+<script>
+    $(document).ready(function () {
+        var roles = $('.role');
+        var multi = $('.sel');
+        // alert(roles.length + ' ' + multi.length)
+        for (var i = 0; i < roles.length; i++) {
+            var children = $(roles[i]).children();
+            for (var j = 0; j < children.length; j++) {
+                //alert($(children[j]).html());
+                var selChildren = $(multi[i]).children("select").children();
+                for (var k = 0; k < selChildren.length; k++) {
+                    if ($(selChildren[k]).val() == $(children[j]).html()) {
+                        $(selChildren[k]).attr('selected', 'selected');
+                    }
+                }
+                // $(multi[i]).children("select").val($(children[j]).html());
+            }
+        }
+        $("select[role='multiselect']").multiselect();
+        $('.paginate_button').click(function () {
+            var roles = $('.role');
+            var multi = $('.sel');
+            // alert(roles.length + ' ' + multi.length)
+            for (var i = 0; i < roles.length; i++) {
+                var children = $(roles[i]).children();
+                for (var j = 0; j < children.length; j++) {
+                    //alert($(children[j]).html());
+                    var selChildren = $(multi[i]).children("select").children();
+                    for (var k = 0; k < selChildren.length; k++) {
+                        if ($(selChildren[k]).val() == $(children[j]).html()) {
+                            $(selChildren[k]).attr('selected', 'selected');
+                        }
+                    }
+                    // $(multi[i]).children("select").val($(children[j]).html());
+                }
+            }
+            $("select[role='multiselect']").multiselect();
         });
+        /////////////////////////////////////////////////////////
+        $("input[type='checkbox']").click(function () {
+            //alert($(this).val());
+            var userId = $(this).parent().parent().parent().parent().parent().parent().attr('uid');
+            var role = $(this).val();
+            if ($(this).is(":checked")) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Admin/AddRole/' + '?userId=' + userId + '&role=' + role,
+                    data: {},
+                    success: function (result) {
+                        //alert(result);
+                    },
+                    error: function () { alert('Error'); }
+                });
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    url: '/Admin/RemoveRole/' + '?userId=' + userId + '&role=' + role,
+                    data: {},
+                    success: function (result) {
+                        //alert(result);
+                    },
+                    error: function () { alert('Error'); }
+                });
+            }
+        });
+    });
+</script>
 
-    </script>
-}

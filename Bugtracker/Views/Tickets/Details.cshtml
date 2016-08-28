@@ -3,7 +3,12 @@
 @{
     ViewBag.Title = "Ticket Details";
 }
+<style>
+    .btn-space {
+    margin-left: 5px;
+}
 
+</style>
 <div class="col-md-8 subnav">
     <h1>Ticket: @Model.Title</h1>
 </div>
@@ -13,8 +18,8 @@
         {
             if (ViewContext.HttpContext.User.IsInRole("Project Manager") || ViewContext.HttpContext.User.IsInRole("Admin"))
             {
-                @Html.ActionLink("Assign User", "AssignUser", new { id = Model.Id }, new { @class = "action-btn" })
-                @Html.ActionLink("Close", "Close", new { id = Model.Id }, new { @class = "action-btn" })
+                @Html.ActionLink("Assign User", "AssignUser", new { id = Model.Id }, new { @class = "btn btn-info" })
+                @Html.ActionLink("Close", "Close", new { id = Model.Id }, new { @class = "btn btn-danger btn-space" })
             }
             if (ViewBag.UserId == Model.AssignedToUserId || ViewBag.UserId == Model.OwnerUserId || ViewContext.HttpContext.User.IsInRole("Project Manager"))
             {
@@ -82,7 +87,7 @@
                 <div class="col-md-6">
                     @if (!Model.TicketStatus.Name.ToString().Equals("Closed"))
                     {
-                        @Html.ActionLink("New Comment", "AddComment", new { id = Model.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionLink("New Comment", "AddComment", new { id = Model.Id }, new { @class = "btn btn-primary" })
                     }
                 </div>
             </div>
@@ -115,7 +120,7 @@
                 <div class="col-md-6">
                     @if (!Model.TicketStatus.Name.ToString().Equals("Closed"))
                     {
-                        @Html.ActionLink("New Attachment", "AddAttachment", new { id = Model.Id }, new { @class = "btn btn-default" })
+                        @Html.ActionLink("New Attachment", "AddAttachment", new { id = Model.Id }, new { @class = "btn btn-success" })
                     }
                 </div>
             </div>

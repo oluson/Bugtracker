@@ -26,8 +26,76 @@ namespace Bugtracker.Controllers
             var userId = User.Identity.GetUserId();
             TicketsHelper helper = new TicketsHelper(db);
             var tickets = helper.GetUserTickets(userId);
-
+            SetDashboard();
             return View(tickets);
+        }
+
+        private void SetDashboard()
+        {
+            var userId = User.Identity.GetUserId();
+            var tickets = new List<Tickets>();
+            var attachments = new List<TicketAttachments>();
+            var comments = new List<TicketComments>();
+            int projects = 0;
+
+            if (User.IsInRole("Admin"))
+            {
+                tickets = db.Tickets.ToList();
+                attachments = db.TicketAttachment.Take(5).ToList();
+                projects = db.Project.Count();
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+            }
+            else if (User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer") && User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.Project.ProjectUsers.Contains(db.Users.Find(userId))).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+
+            var model = new DashboardViewModel()
+            {
+                Tickets = tickets,
+                Attachments = attachments,
+                Comments = comments.Take(5),
+                ProjectsAmt = projects
+            };
+
+            ViewBag.DashboardModel = model;
+            //return View("Dashboard", model);
         }
 
         // GET: Tickets/Details/5
@@ -45,6 +113,7 @@ namespace Bugtracker.Controllers
             }
             TicketsHelper ticketHelper = new TicketsHelper(db);
             var userId = User.Identity.GetUserId();
+            SetDashboard();
             return View(ticket);
             //if (ticketHelper.HasTicketPermission(userId, ticket.Id))
             //{
@@ -59,6 +128,7 @@ namespace Bugtracker.Controllers
         [Authorize]
         public ActionResult History(int? id)
         {
+            SetDashboard();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -76,6 +146,7 @@ namespace Bugtracker.Controllers
                 return View(ticket);
             }
             TempData["Error"] = "Sorry, you do not have permission to view that ticket.";
+           
             return RedirectToAction("Index");
         }
 
@@ -83,6 +154,7 @@ namespace Bugtracker.Controllers
         // POST: Tickets/Create
         public ActionResult Create(int? id)
         {
+            SetDashboard();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -129,6 +201,7 @@ namespace Bugtracker.Controllers
                 {
                     ticket.Title = StringUtilities.Shorten(ticket.Description, 50);
                 }
+                SetDashboard();
                 ticket.Created = DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 // ticket.TicketStatus = new TicketStatuses();
@@ -200,6 +273,7 @@ namespace Bugtracker.Controllers
             }
             TicketsHelper ticketHelper = new TicketsHelper(db);
             var userId = User.Identity.GetUserId();
+            SetDashboard();
             if (!ticketHelper.HasTicketPermission(userId, ticket.Id))
             {
                 TempData["Error"] = "Sorry, you do not have permission to access that ticket.";
@@ -235,7 +309,6 @@ namespace Bugtracker.Controllers
             ViewBag.Types = new SelectList(types, "Value", "Text");
             ViewBag.ProjectId = id;
             ViewBag.PriorityName = priority.Name;
-
             return View(ticket);
         }
 
@@ -253,6 +326,7 @@ namespace Bugtracker.Controllers
                 {
                     ticket.Title = StringUtilities.Shorten(ticket.Description, 50);
                 }
+                SetDashboard();
                 ticket.Updated = System.DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 // ticket.TicketStatus = new TicketStatuses();
@@ -346,6 +420,7 @@ namespace Bugtracker.Controllers
             }
             AssignModel.UsersList = new SelectList(projectDevelopers, "Id", "LastName");
             db.SaveChanges();
+            SetDashboard();
             return View(AssignModel);
         }
 
@@ -369,6 +444,7 @@ namespace Bugtracker.Controllers
             history.NewValue = historyBody;
             history.TicketId = ticket.Id;
             db.TicketHistory.Add(history);
+            SetDashboard();
             //send email to previous developer
             if (oldTicket.AssignedToUserId != ticket.AssignedToUserId && oldTicket.AssignedToUserId == null)
             {
@@ -414,6 +490,7 @@ namespace Bugtracker.Controllers
             {
                 return HttpNotFound();
             }
+            SetDashboard();
             return View(ticket);
         }
 
@@ -438,7 +515,7 @@ namespace Bugtracker.Controllers
             db.Entry(ticket).Property("TicketStatusId").IsModified = true;
             db.Entry(ticket).Property("Updated").IsModified = true;
             db.SaveChanges();
-
+            SetDashboard();
             await NotifyDeveloper(id, userId, ticket.AssignedToUserId);
             return RedirectToAction("Index");
         }
@@ -457,6 +534,7 @@ namespace Bugtracker.Controllers
                 return HttpNotFound();
             }
             var userId = User.Identity.GetUserId();
+            SetDashboard();
             if (ticket.AssignedToUserId == userId)
             {
                 ViewBag.UserId = User.Identity.GetUserId();
@@ -490,6 +568,7 @@ namespace Bugtracker.Controllers
             db.Entry(ticket).Property("TicketStatusId").IsModified = true;
             db.Entry(ticket).Property("Updated").IsModified = true;
             db.SaveChanges();
+            SetDashboard();
             //Send email to project managers
             ProjectRolesHelper helper = new ProjectRolesHelper(db);
             var projectManagers = helper.ListProjectManagers(ticket.ProjectId);
@@ -528,6 +607,7 @@ namespace Bugtracker.Controllers
             }
             ViewBag.TicketId = id;
             ViewBag.TicketTitle = ticket.Title;
+            SetDashboard();
             return View();
         }
 
@@ -543,7 +623,7 @@ namespace Bugtracker.Controllers
                 Ticketcomment.Created = System.DateTime.Now;
                 db.TicketComment.Add(Ticketcomment);
                 db.SaveChanges();
-
+                SetDashboard();
                 var ticket = db.Tickets.Find(Ticketcomment.TicketId);
                 var assigneeId = ticket.AssignedToUserId;
                 await NotifyDeveloper(Ticketcomment.TicketId, Ticketcomment.UserId, assigneeId);
@@ -561,6 +641,7 @@ namespace Bugtracker.Controllers
         {
             TicketComments comment = db.TicketComment.Find(id);
             db.TicketComment.Remove(comment);
+            SetDashboard();
             db.SaveChanges();
             return RedirectToAction("Details", new { id = comment.TicketId });
         }
@@ -580,6 +661,7 @@ namespace Bugtracker.Controllers
             }
             TicketsHelper ticketHelper = new TicketsHelper(db);
             var userId = User.Identity.GetUserId();
+            SetDashboard();
             if (!ticketHelper.HasTicketPermission(userId, ticket.Id))
             {
                 TempData["Error"] = "Sorry, you do not have permission to access that ticket.";
@@ -612,6 +694,7 @@ namespace Bugtracker.Controllers
                         return View();
                     }
                 }
+                SetDashboard();
                 attachment.FileUrl = attachment.FilePath;
                 attachment.Created = DateTime.Now;
                 attachment.UserId = User.Identity.GetUserId();
@@ -634,6 +717,7 @@ namespace Bugtracker.Controllers
         {
             TicketAttachments attachment = db.TicketAttachment.Find(id);
             db.TicketAttachment.Remove(attachment);
+            SetDashboard();
             db.SaveChanges();
             return RedirectToAction("Details", new { id = attachment.TicketId });
         }

@@ -1,43 +1,91 @@
-﻿@model IEnumerable<Bugtracker.Models.Projects>
+﻿<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" />
+@model IEnumerable<Bugtracker.Models.Projects>
 
 @{
     ViewBag.Title = "View All Projects";
 }
-
-<div class="col-md-6 subnav">
-    <h1>All Projects</h1>
-</div>
-<div class="col-md-6 subnav">
-    <div class="admin-btns">
-        <hr />
-        @Html.ActionLink("Create New", "Create", "Projects", new { controller = "Projects", action = "Create" }, new { @class = "action-btn" })
-        @Html.ActionLink("Your Projects", "Index", "Projects", new { controller = "Projects", action = "Index" }, new { @class = "action-btn" })
+<div class="row">
+    <div class="col-md-6 subnav">
+        <h1>All Projects</h1>
     </div>
 </div>
-
-<div class="container">
-    <div class="row">
-
-        <div class="col-md-offset-1 col-md-11 content">
-            @Html.ActionLink("View Archived Projects", "Archive", "Projects", new { controller = "Projects", action = "Index" }, new { @class = "btn btn-default" })
+<div class="row">
+    <div class="col-md-6 subnav">
+        <div class="admin-btns">
+            <hr />
+            @Html.ActionLink("Create New", "Create", "Projects", new { controller = "Projects", action = "Create" }, new { @class = "btn btn-primary" })
+            @Html.ActionLink("Your Projects", "Index", "Projects", new { controller = "Projects", action = "Index" }, new { @class = "btn btn-success" })
+            @Html.ActionLink("View Archived Projects", "Archive", "Projects", new { controller = "Projects", action = "Index" }, new { @class = "btn btn-danger" })
         </div>
-
-        @foreach (var item in Model)
-        {
-            <div class="col-md-12 content">
-                <div class="col-md-offset-1 col-md-4">
-                    <h3>@Html.ActionLink(item.Name, "Details", new { id = item.Id })</h3>
-                    <p>Deadline: @item.Deadline.ToString("MMMM dd, yyyy h:mm t")M</p>
-                </div>
-                @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
-                {
-                    <div class="col-md-6">
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-default" })
-                        @Html.ActionLink("Assign Users", "AssignUsers", new { id = item.Id }, new { @class = "btn btn-default" })
-                        @Html.ActionLink("Archive", "ArchiveProject", new { id = item.Id }, new { @class = "btn btn-default" })
-                    </div>
-                }
-            </div>
-        }
     </div>
 </div>
+<div class="row">
+    <div class="col-lg-12">
+        <p @*class="text-danger"*@>@TempData["Error"]</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Title
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Created
+                    </th>
+                    <th>
+                        Deadline
+                    </th>
+                    @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+                    {
+                        <th>
+                            Action
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.ActionLink(item.Title, "Details", new { id = item.Id })
+                        </td>
+                        <td>
+                            @item.Description
+                        </td>
+                        <td>
+                            @item.Created.ToString("MMMM dd, yyyy h:mm t")
+                        </td>
+                        <td>
+                            @item.Deadline.ToString("MMMM dd, yyyy h:mm t")
+                        </td>
+
+                        @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+                        {
+                            <td>
+                                @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-primary" })
+                                @Html.ActionLink("Assign Users", "AssignUsers", new { id = item.Id }, new { @class = "btn btn-success" })
+                                @Html.ActionLink("Archive", "ArchiveProject", new { id = item.Id }, new { @class = "btn btn-warning" })
+                            </td>
+                        }
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!--jQuery-->
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+@*@Scripts.Render("~/bundles/jquery")*@
+
+<!--DataTables-->
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $('.table').DataTable();
+</script>

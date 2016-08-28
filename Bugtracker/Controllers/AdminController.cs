@@ -1,4 +1,5 @@
 ﻿using Bugtracker.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,9 +16,78 @@ namespace Bugtracker.Controllers
         // GET: Admin
         public ActionResult Index()
         {
+            SetDashboard();
             return RedirectToAction("ListUsers");
         }
 
+
+        private void SetDashboard()
+        {
+            var userId = User.Identity.GetUserId();
+            var tickets = new List<Tickets>();
+            var attachments = new List<TicketAttachments>();
+            var comments = new List<TicketComments>();
+            int projects = 0;
+
+            if (User.IsInRole("Admin"))
+            {
+                tickets = db.Tickets.ToList();
+                attachments = db.TicketAttachment.Take(5).ToList();
+                projects = db.Project.Count();
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+            }
+            else if (User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer") && User.IsInRole("Project Manager"))
+            {
+                tickets = db.Tickets.Where(t => t.Project.ProjectUsers.Contains(db.Users.Find(userId))).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+            else if (User.IsInRole("Developer"))
+            {
+                tickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                foreach (var ticket in tickets)
+                    foreach (var attach in ticket.TicketAttachment)
+                        attachments.Add(attach);
+                foreach (var ticket in tickets)
+                    foreach (var comment in ticket.TicketComment)
+                        comments.Add(comment);
+
+                ProjectRolesHelper helper = new ProjectRolesHelper(db);
+                projects = helper.ListProjects(userId).Count();
+            }
+
+            var model = new DashboardViewModel()
+            {
+                Tickets = tickets,
+                Attachments = attachments,
+                Comments = comments.Take(5),
+                ProjectsAmt = projects
+            };
+
+            ViewBag.DashboardModel = model;
+            //return View("Dashboard", model);
+        }
         [Authorize(Roles = "Admin")]
         //
         // GET: /Admin/ListUsers
@@ -39,7 +109,7 @@ namespace Bugtracker.Controllers
                 }
                 UserModel.Users.Add(new UsersViewModel(id, name, roles, projects));
             }
-
+            SetDashboard();
             return View(UserModel);
         }
 
@@ -58,22 +128,51 @@ namespace Bugtracker.Controllers
             AdminModel.Id = user.Id;
             AdminModel.Name = user.FirstName + " " + user.LastName;
 
+            SetDashboard();
             return View(AdminModel);
         }
 
         //
         // POST: Add User Role
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost]
+        //public ActionResult AddRole(string Id, List<string> SelectedAbsentRoles)
+        //{
+        //    SetDashboard();
+        //    if (ModelState.IsValid)
+        //    {
+        //        UserRolesHelper helper = new UserRolesHelper(db);
+        //        var user = db.Users.Find(Id);
+        //        foreach (var role in SelectedAbsentRoles)
+        //        {
+        //            helper.AddUserToRole(Id, role);
+        //        }
+
+        //        db.Entry(user).State = EntityState.Modified;
+        //        db.Users.Attach(user);
+        //        db.SaveChanges();
+        //        return RedirectToAction("ListUsers");
+        //    }
+        //    return View(Id);
+        //}
+
+        //
+        // POST: Add User Role
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public ActionResult AddRole(string Id, List<string> SelectedAbsentRoles)
+        [HttpGet]
+        public ActionResult AddRole(string userId, string role)
         {
+            SetDashboard();
             if (ModelState.IsValid)
             {
                 UserRolesHelper helper = new UserRolesHelper(db);
-                var user = db.Users.Find(Id);
-                foreach (var role in SelectedAbsentRoles)
+                var user = db.Users.Find(userId);
+                foreach (var r in helper.ListAllRoles())
                 {
-                    helper.AddUserToRole(Id, role);
+                    if (r.ToString() == role)
+                    {
+                        helper.AddUserToRole(userId, r);
+                    }
                 }
 
                 db.Entry(user).State = EntityState.Modified;
@@ -81,22 +180,48 @@ namespace Bugtracker.Controllers
                 db.SaveChanges();
                 return RedirectToAction("ListUsers");
             }
-            return View(Id);
+            return View();
         }
 
         //
         // POST: Remove User Role
+        //[Authorize(Roles = "Admin")]
+        //[HttpPost]
+        //public ActionResult RemoveRole(string Id, List<string> SelectedCurrentRoles)
+        //{
+        //    SetDashboard();
+        //    if (ModelState.IsValid)
+        //    {
+        //        UserRolesHelper helper = new UserRolesHelper(db);
+        //        var user = db.Users.Find(Id);
+        //        foreach (var role in SelectedCurrentRoles)
+        //        {
+        //            helper.RemoveUserFromRole(Id, role);
+        //        }
+
+        //        db.Entry(user).State = EntityState.Modified;
+        //        db.Users.Attach(user);
+        //        db.SaveChanges();
+        //        return RedirectToAction("ListUsers");
+        //    }
+        //    return View(Id);
+        //}
+
         [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public ActionResult RemoveRole(string Id, List<string> SelectedCurrentRoles)
+        [HttpGet]
+        public ActionResult RemoveRole(string userId, string role)
         {
+            SetDashboard();
             if (ModelState.IsValid)
             {
                 UserRolesHelper helper = new UserRolesHelper(db);
-                var user = db.Users.Find(Id);
-                foreach (var role in SelectedCurrentRoles)
+                var user = db.Users.Find(userId);
+                foreach (var r in helper.ListAllRoles())
                 {
-                    helper.RemoveUserFromRole(Id, role);
+                    if (r.ToString() == role)
+                    {
+                        helper.RemoveUserFromRole(userId, r);
+                    }
                 }
 
                 db.Entry(user).State = EntityState.Modified;
@@ -104,7 +229,7 @@ namespace Bugtracker.Controllers
                 db.SaveChanges();
                 return RedirectToAction("ListUsers");
             }
-            return View(Id);
+            return View();
         }
     }
 }

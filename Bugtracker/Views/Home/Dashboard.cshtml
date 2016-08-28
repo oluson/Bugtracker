@@ -9,155 +9,191 @@
         <div class="row">
             <!-- projects-->
             <div class="col-md-6">
-                <div class="box-info warning">
-                    <div class="icon-box">
-                        <span class="fa-stack">
-                            @*<i class="fa fa-circle fa-stack-2x text-white"></i>*@
-                            @*<i class="fa fa-puzzle-piece fa-stack-1x warning"></i>*@
-                        </span>
+                <div class="small-box bg-aqua">
+                    <div class="inner">
+                        <h3>@Model.ProjectsAmt</h3>
+                        <p>Current Projects</p>
                     </div>
-                    <a href=@Url.Action("Index", "Projects")>
-                        <div class="text-box">
-                            <h3>@Model.ProjectsAmt</h3>
-                            <p>Current Projects</p>
-                        </div>
-                    </a>
-                    <div class="clear"></div>
+                    <div class="icon">
+                        <i class="ion ion-flag"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "Projects")" class="small-box-footer">More Info  <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
             <!-- tickets -->
             <div class="col-md-6">
-                <div class="box-info warning">
-                    <div class="icon-box">
-                        <span class="fa-stack">
-                            @*<i class="fa fa-circle fa-stack-2x text-white"></i>*@
-                            @*<i class="fa fa-ticket fa-stack-1x warning"></i>*@
-                        </span>
-                    </div>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        @:<a href=@Url.Action("Index", "Tickets")>
-                    }
-                    else
-                    {
-                        @:<a href=@Url.Action("Index", "Tickets")>
-                    }
-                    <div class="text-box">
+                <div class="small-box bg-red">
+                    <div class="inner">
                         <h3>@Model.Tickets.Count()</h3>
                         <p>Current Tickets</p>
                     </div>
-                </a>
-                </a>
-                <div class="clear"></div>
+                    <div class="icon">
+                        <i class="fa fa-bell"></i>
+                    </div>
+                    <a href="@Url.Action("Index", "Tickets")" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+
+            </div>
         </div>
-    </div>
-</div>
-<div class="box-info shadow">
-    <div class="row">
-        <!-- priority donut -->
-        <div class="col-md-4">
-            <h2>Tickets By Priority</h2>
-            <div id="ticketsByPriority" class="box-content">
-                <div id="priorityDonut" style="height: 125px;" class="col-md-12">
+        <div class="box-info shadow">
+            <div class="row">
+                <!-- priority donut -->
+                <div class="col-md-4">
+                    <div class="box box-success box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Tickets By Priority</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="chart" id="priority" style="height: 170px; position: relative;"></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <!--action donut-->
+                <div class="col-md-4">
+                    <div class="box box-danger box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Tickets By Type</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="chart" id="type" style="height: 170px; position: relative;"></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <!--phase donut-->
+                <div class="col-md-4">
+                    <div class="box box-default box-solid">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Tickets By Status</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="chart" id="status" style="height: 170px; position: relative;"></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
                 </div>
             </div>
         </div>
-        <!--action donut-->
-        <div class="col-md-4">
-            <h2>Tickets By Type</h2>
-            <div id="ticketByAction" class="box-content">
-                <div id="actionDonut" style="height: 125px;" class="col-md-12">
-                </div>
-            </div>
-        </div>
-        <!--phase donut-->
-        <div class="col-md-4">
-            <h2>Tickets By Status</h2>
-            <div id="ticketsByPhase" class="box-content">
-                <div id="phaseDonut" style="height: 125px;" class="col-md-12">
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@if (User.IsInRole("Admin"))
-{
+        @if (User.IsInRole("Admin"))
+        {
         <!--UNASSIGNED TICKETS-->
-    <div class="row">
-        <div class="col-md-12">
-            <div id="unassigned" class="box-info shadow">
-                <h2><strong>Unassigned</strong> Tickets</h2>
-                <div class="box-content">
-                    <table id="unassignedTickets" class="data-table-xl hover row-border table-striped compact">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Project</th>
-                                <th>Submitted By</th>
-                                <th>On</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var ticket in Model.Tickets.Where(t => t.TicketStatus.Name != "Resolved" && (t.TicketPriority == null || t.AssignedToUserId == null)))
-                            {
-                                <tr>
-                                    <td>@ticket.Title</td>
-                                    @if (ticket.Project == null)
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="unassigned" class="box-info shadow">
+                        <h2><strong>Unassigned</strong> Tickets</h2>
+                        <div class="box-content">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Project</th>
+                                        <th>Submitted By</th>
+                                        <th>On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ticket in Model.Tickets.Where(t => t.TicketStatus.Name != "Resolved" && (t.TicketPriority == null || t.AssignedToUserId == null)))
                                     {
-                                        <td>unassigned</td>}
-                                    else
-                                    {
-                                        <td>@ticket.Project.Name</td> }
-                                    <td>@ticket.OwnerUser.FirstName @ticket.OwnerUser.LastName</td>
-                                    <td>@ticket.Created</td>
-                                    <td>
-                                        <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
-                                        <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
-                                        @*<a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>*@
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                        <tr>
+                                            <td>@ticket.Title</td>
+                                            @if (ticket.Project == null)
+                                            {
+                                                <td>unassigned</td>}
+                                            else
+                                            {
+                                                <td>@ticket.Project.Name</td> }
+                                            <td>@ticket.OwnerUser.FirstName @ticket.OwnerUser.LastName</td>
+                                            <td>@ticket.Created</td>
+                                            <td>
+                                                <a href=@Url.Action("Details", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-eye"></i></a>
+                                                <a href=@Url.Action("Edit", "Tickets", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>
+                                                @*<a href=@Url.Action("Create", "Attachments", new { id = ticket.Id }) class="btn btn-xs btn-warning"><i class="fa fa-flip-horizontal fa-paperclip"></i></a>*@
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Project</th>
+                                        <th>Submitted By</th>
+                                        <th>On</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
-}
-</div>
-<!-- counts -->
-<div class="col-md-4">
-    <!-- comments -->
-    <div id="comments" class="box-info">
-        <h2>Recent Comments</h2>
-        <div class="box-content">
-            @foreach (var comment in Model.Comments)
+    <!-- counts -->
+    <div class="col-md-4">
+        <!-- comments -->
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">Recent Comments</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                @foreach (var comment in Model.Comments)
             {
-                <h6><b>Ticket: @comment.Ticket.Title</b></h6>
-                <p class="single-line">@comment.Comment</p>@*<span class="ellipsis">...</span>*@<span class="ellipsis"></span>
-                <p>@comment.Created</p>
+                    <h6><b>Ticket: @comment.Ticket.Title</b></h6>
+                    <p class="single-line">@comment.Comment</p>@*<span class="ellipsis">...</span>*@<span class="ellipsis"></span>
+                    <p>@comment.Created</p>
                     <br />
-            }
+                }
+            </div>
+            <!-- /.box-body -->
         </div>
-    </div>
-    <!--attachments-->
-    <div id="attachments" class="box-info">
-        <h2>Recent Attachments</h2>
-        <div class="box-content">
-            @foreach (var attach in Model.Attachments)
+        <!--attachments-->
+        <div class="box box-warning box-solid">
+            <div class="box-header with-border">
+                <h3 class="box-title">Recent Attachments</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+                <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                @foreach (var attach in Model.Attachments)
             {
-                <h6><b>Ticket: @attach.Ticket.Title</b></h6>
-                <p>@attach.Description</p>
-            }
+                    <h6><b>Ticket: @attach.Ticket.Title</b></h6>
+                    <p>@attach.Description</p>
+                }
+            </div>
+            <!-- /.box-body -->
         </div>
-    </div>
-    @if (User.IsInRole("Admin"))
-    {
-        <div id="resolved" class="box-info">
-            <h2>Recently Resolved</h2>
-            <div class="box-content">
-                <dl>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="box box-success box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Recently Resolved</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                    <!-- /.box-tools -->
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
                     @foreach (var resolved in Model.Tickets.Where(t => t.TicketStatus.Name == "Resolved"))
                     {
                         <dt>@resolved.Project.Name</dt>
@@ -166,10 +202,49 @@
                             <a href=@Url.Action("Details", "Tickets" , new { id=resolved.Id }) class="pull-right btn btn-warning btn-xs"><i class="fa fa-eye"></i></a>
                         </dd>
                     }
-                </dl>
+                </div>
+                <!-- /.box-body -->
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
-</div>
-
+@Scripts.Render("~/plugins/jQuery/jquery-2.2.3.min.js")
+<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+@Scripts.Render("~/plugins/morris/morris.min.js")
+<script>
+    $.post('@Url.Action("GetCharts", "Home")').then(function (response) {
+        new Morris.Donut({
+            element: 'priority',
+            data: response.priorityDonut,
+            //colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+        new Morris.Donut({
+            element: 'type',
+            data: response.typeDonut,
+            //colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+        new Morris.Donut({
+            element: 'status',
+            data: response.statusDonut,
+            //colors: ['#d48311', '#ed9c28', '#f0a742', '#f4bd71', '#f7d3a1', '#fbe9d0', '#ffffff'],
+            resize: true,
+        })
+    });
+    //$(function () {
+    //    "use strict";
+    //    //DONUT CHART
+    //    var donut = new Morris.Donut({
+    //        element: 'sales-chart',
+    //        resize: true,
+    //        colors: ["#3c8dbc", "#f56954", "#00a65a"],
+    //        data: [
+    //          { label: "Download Sales", value: 12 },
+    //          { label: "In-Store Sales", value: 30 },
+    //          { label: "Mail-Order Sales", value: 20 }
+    //        ],
+    //        hideHover: 'auto'
+    //    });
+    //});
+</script>
