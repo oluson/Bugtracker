@@ -14,6 +14,21 @@
         <h1>Tickets</h1>
     </div>
 
+
+@*<div class="row">
+    <div class="col-md-6 subnav">
+        <div class="admin-btns">
+            @if (ViewContext.HttpContext.User.IsInRole("Admin") || ViewContext.HttpContext.User.IsInRole("Project Manager"))
+            {
+                @Html.ActionLink("Create New ", "Create", "Tickets", new { controller = "Tickets", action = "Create" }, new { @class = "btn btn-primary" })
+                }
+        </div>
+    </div>
+</div>*@
+
+
+
+
     <div @*class="container*@">
         <div @*class="row"*@>
             <div @*class="col-md-12 content"*@>

@@ -1284,6 +1284,7 @@
     <Content Include="plugins\input-mask\phone-codes\phone-codes.json" />
     <Content Include="Views\Account\LoginNew.cshtml" />
     <Content Include="Views\Account\RegisterNew.cshtml" />
+    <None Include="Properties\PublishProfiles\olusonbt - Web Deploy.pubxml" />
     <None Include="Views\Projects\Admin.cshtml" />
     <Content Include="Views\Projects\UserRoleAdmin.cshtml" />
     <Content Include="Views\Tickets\Create.cshtml" />

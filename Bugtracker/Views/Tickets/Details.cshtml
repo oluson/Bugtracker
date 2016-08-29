@@ -23,7 +23,7 @@
             }
             if (ViewBag.UserId == Model.AssignedToUserId || ViewBag.UserId == Model.OwnerUserId || ViewContext.HttpContext.User.IsInRole("Project Manager"))
             {
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "action-btn" })
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
             }
 
             if (ViewContext.HttpContext.User.IsInRole("Developer") && ViewBag.UserId == Model.AssignedToUserId && !Model.TicketStatus.Name.ToString().Equals("Resolved"))
