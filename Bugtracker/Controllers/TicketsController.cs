@@ -24,8 +24,10 @@ namespace Bugtracker.Controllers
         public ActionResult Index()
         {
             var userId = User.Identity.GetUserId();
+            ViewBag.userId = userId;
             TicketsHelper helper = new TicketsHelper(db);
-            var tickets = helper.GetUserTickets(userId);
+            //var tickets = helper.GetUserTickets(userId);
+            var tickets = db.Tickets.Include("Project").Include("TicketPriority").Include("TicketStatus").Include("TicketType").Include("AssignedToUser");
             SetDashboard();
             return View(tickets);
         }
