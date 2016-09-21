@@ -15,6 +15,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Bugtracker | Oluson</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -78,8 +80,8 @@ desired effect
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                       @* <li>@Html.ActionLink("About", "About", "Home")</li>*@
+                        @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
 
                         <li>@Html.ActionLink("Tickets", "Index", "Tickets")</li>
 
@@ -245,8 +247,8 @@ desired effect
                     @*<li class="header">HEADER</li>*@
                     <!-- Optionally, you can add icons to the links -->
                     <li><a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> <span>Home</span></a></li>
-                    <li><a href="@Url.Action("About", "Home")"><i class="glyphicon glyphicon-eye-open"></i> <span>About</span></a></li>
-                    <li><a href="@Url.Action("Contact", "Home")"><i class="fa fa-envelope"></i> <span>Contact</span></a></li>
+                    @*<li><a href="@Url.Action("About", "Home")"><i class="glyphicon glyphicon-eye-open"></i> <span>About</span></a></li>*@
+                    @*<li><a href="@Url.Action("Contact", "Home")"><i class="fa fa-envelope"></i> <span>Contact</span></a></li>*@
                     <li><a href="@Url.Action("Index", "Tickets")"><i class="fa fa-bell"></i> <span>Tickets</span></a></li>
                     @if (User.IsInRole("Admin"))
                     {
@@ -374,7 +376,7 @@ desired effect
     <!-- jQuery 2.2.3 -->
     @Scripts.Render("~/plugins/jQuery/jquery-2.2.3.min.js")
     <!-- Bootstrap 3.3.6 -->
-    @Scripts.Render("~/bootstrap/js/bootstrap.min.js")>
+    @Scripts.Render("~/bootstrap/js/bootstrap.min.js")
     <!-- AdminLTE App -->
     @Scripts.Render("~/plugins/datatables/jquery.dataTables.min.js")
     @Scripts.Render("~/plugins/datatables/dataTables.bootstrap.min.js")

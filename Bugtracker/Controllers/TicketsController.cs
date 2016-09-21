@@ -11,6 +11,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Data.Entity;
 
 namespace Bugtracker.Controllers
 {
@@ -148,7 +149,7 @@ namespace Bugtracker.Controllers
                 return View(ticket);
             }
             TempData["Error"] = "Sorry, you do not have permission to view that ticket.";
-           
+
             return RedirectToAction("Index");
         }
 
@@ -297,6 +298,14 @@ namespace Bugtracker.Controllers
                                    Text = x.Name
                                });
 
+            var stat = db.TicketStatus
+           .Select(x =>
+                   new SelectListItem
+                   {
+                       Value = x.Id.ToString(),
+                       Text = x.Name
+                   });
+
 
             var project = db.Project.FirstOrDefault(p => p.Id == ticket.ProjectId);
             var ProjectTitle = project.Title;
@@ -308,7 +317,9 @@ namespace Bugtracker.Controllers
             ViewBag.ProjectTitle = ProjectTitle;
             ViewBag.TicketType = TicketType;
             ViewBag.Priorities = new SelectList(priorities, "Value", "Text");
+           // ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", tickets.TicketPriorityId);
             ViewBag.Types = new SelectList(types, "Value", "Text");
+            ViewBag.Status = new SelectList(stat, "Value", "Text");
             ViewBag.ProjectId = id;
             ViewBag.PriorityName = priority.Name;
             return View(ticket);
@@ -320,7 +331,7 @@ namespace Bugtracker.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,ProjectId,Title,Description,TicketPriorityId,TicketTypeId")] Tickets ticket)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,ProjectId,Title,Description,TicketPriorityId,TicketTypeId,TicketStatusId")] Tickets ticket)
         {
             if (ModelState.IsValid)
             {
@@ -328,7 +339,7 @@ namespace Bugtracker.Controllers
                 {
                     ticket.Title = StringUtilities.Shorten(ticket.Description, 50);
                 }
-                SetDashboard();
+                //SetDashboard();
                 ticket.Updated = System.DateTimeOffset.Now;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 // ticket.TicketStatus = new TicketStatuses();
@@ -372,11 +383,11 @@ namespace Bugtracker.Controllers
                     return View(ticket);
                 }
 
-                db.Tickets.Attach(ticket);
-                //db.Entry(ticket).State = EntityState.Modified;
-                db.Entry(ticket).Property("Updated").IsModified = true;
-                db.Entry(ticket).Property("Title").IsModified = true;
-                db.Entry(ticket).Property("Description").IsModified = true;
+                //db.Tickets.Attach(ticket);
+                db.Entry(ticket).State = EntityState.Modified;
+                //db.Entry(ticket).Property("Updated").IsModified = true;
+                //db.Entry(ticket).Property("Title").IsModified = true;
+                //db.Entry(ticket).Property("Description").IsModified = true;
                 //db.Entry(ticket).Property("Priority").IsModified = true;
 
                 db.SaveChanges();

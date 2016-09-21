@@ -1,56 +1,107 @@
-﻿@model Bugtracker.Models.DashboardViewModel
-@{
-    ViewBag.Title = "Dashboard";
+﻿@{ 
+    Layout=null;
 }
 
-<div class="col-md-6 subnav">
-    <h1>Dashboard</h1>
-</div>
-<div class="col-md-6 subnav">
-    <h1>Welcome  To O's Bugtracker! </h1>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>ACSA Bugtraker</title>
 
+    <!-- Bootstrap Core CSS -->
+    @Styles.Render("~/dist/css/bootstrap.min.css")
+    @*<link href="dist/css/bootstrap.min.css" rel="stylesheet" />*@
+    <!-- Custom CSS -->
+    <!--<link href="~css/landing-page.css" rel="stylesheet">-->
+    @Styles.Render("~/dist/css/landing-page.css")
+   @* <link href="dist/css/landing-page.css" rel="stylesheet" />*@
+    <!-- Custom Fonts -->
+    @Styles.Render("~/dist/css/font-awesome.css")
+   @* <link href="dist/css/font-awesome.css" rel="stylesheet" type="text/css" />*@
+    <!--<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">-->
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+    <!-- Navigation -->
+    <!--<nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+        <div class="container topnav">
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 content">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand topnav" href="#">Start Bootstrap</a>
+            </div>
 
-            @if (ViewContext.HttpContext.User.IsInRole("Admin"))
-            {
-                <p>@Html.ActionLink("Edit User Roles", "ListUsers", "Admin", new { controller = "Admin", action = "ListUsers" }, new { @class = "btn btn-default" })</p>
-            }
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#about">About</a>
+                    </li>
+                    <li>
+                        <a href="#services">Features</a>
+                    </li>
+                    <li>
+                        <a href="#services">Technology</a>
+                    </li>
+                    <li>
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
 
         </div>
-        <div class="col-md-6">
-            <h2>Assigned Projects</h2>
-            <table class="table table-striped">
-                @if (Model.Projects != null)
-                {
-                    foreach (var project in Model.Projects)
-                    {
-                        <tr>
-                            <td>@Html.ActionLink(project.Name, "Details", "Projects", new { id = project.Id }, null)</td>
-                        </tr>
-                    }
-                }
-            </table>
-            <p>@Html.ActionLink("View All Projects", "Index", "Projects")</p>
-        </div>
 
-        <div class="col-md-6">
-            <h2>Recent Tickets</h2>
-            <table class="table table-striped">
-                @if (Model.Tickets != null)
-                {
-                    foreach (var ticket in Model.Tickets)
-                    {
-                        <tr>
-                            <td>@Html.ActionLink(ticket.Title, "Details", "Tickets", new { id = ticket.Id }, null)</td>
-                        </tr>
-                    }
-                }
-            </table>
-            <p>@Html.ActionLink("View All Tickets", "Index", "Tickets")</p>
+    </nav>-->
+    <!-- Header -->
+    <a name="about"></a>
+    <div class="intro-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="intro-message">
+                        <div class="intro-container" style="color:wheat">
+                            <h1>Welcome to ACSA Bugtracker</h1>
+                            <h3> ACSA Bugtracker is a task and defect tracking tool purposefully built for development teams of all sizes. Its configurable workflows allows it to meet the needs of any organization's development and QA processes, large or small. ACSA Bugtracker was built as part of the <a href="http://coderfoundry.com" target="_blank" style="color:yellow">coder foundry</a> curricullum  using Asp.Net, MVC5, SQL, Html, CSS, Bootstrap, C#, Jquery, Javascript and Ajax .</h3>
+                            <hr class="intro-divider">
+                            <ul class="list-inline intro-social-buttons">
+                                <!--<li>
+                                    <a href="https://twitter.com/SBootstrap" class="btn btn-success btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                                </li>-->
+                                <li>
+                                    <a href=@Url.Action("Login","Account") class="btn btn-primary btn-lg"><span class="network-name">Demo</span></a>
+                                </li>
+                                <!--<li>
+                                    <a href="#" class="btn btn-default btn-lg"><i class="fa fa-linkedin fa-fw"></i> <span class="network-name">Linkedin</span></a>
+                                </li>-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <!-- /.container -->
     </div>
-</div>
+    <!-- /.intro-header -->
+    <!-- Page Content -->
+    <!-- jQuery -->
+    @Scripts.Render("~/dist/js/jquery.js")
+    @*<script src="dist/js/jquery.js"></script>*@
+    <!-- Bootstrap Core JavaScript -->
+    @Scripts.Render("~/dist/js/bootstrap.min.js")
+    @*<script src="dist/js/bootstrap.min.js"></script>*@
+</body>
+</html>

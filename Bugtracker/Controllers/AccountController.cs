@@ -54,7 +54,8 @@ namespace Bugtracker.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
-            ViewBag.ReturnUrl = returnUrl;
+            //ViewBag.ReturnUrl = returnUrl;
+            ViewBag.ReturnUrl = "~/Home/Index";
             return View("LoginNew");
         }
 
@@ -75,7 +76,7 @@ namespace Bugtracker.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    return RedirectToLocal("~/Home/Dashboard");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -111,7 +112,7 @@ namespace Bugtracker.Controllers
 
             var result = await SignInManager.PasswordSignInAsync("GuestDeveloper", "Password#1", false, shouldLockout: false);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
         // POST: /Account/LoginGuestSuperUser
@@ -124,7 +125,7 @@ namespace Bugtracker.Controllers
 
             var result = await SignInManager.PasswordSignInAsync("GuestPM", "Password#1", false, shouldLockout: false);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
         // POST: /Account/LoginGuestSuperUser
@@ -137,7 +138,7 @@ namespace Bugtracker.Controllers
 
             var result = await SignInManager.PasswordSignInAsync("GuestAdmin", "Password#1", false, shouldLockout: false);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
 
@@ -226,7 +227,7 @@ namespace Bugtracker.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Dashboard", "Home");
                 }
                 AddErrors(result);
             }
@@ -551,7 +552,7 @@ namespace Bugtracker.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Dashboard", "Home");
         }
 
         internal class ChallengeResult : HttpUnauthorizedResult

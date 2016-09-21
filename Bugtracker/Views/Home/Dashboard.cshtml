@@ -175,6 +175,7 @@
             {
                     <h6><b>Ticket: @attach.Ticket.Title</b></h6>
                     <p>@attach.Description</p>
+
                 }
             </div>
             <!-- /.box-body -->
@@ -196,11 +197,12 @@
                 <div class="box-body">
                     @foreach (var resolved in Model.Tickets.Where(t => t.TicketStatus.Name == "Resolved"))
                     {
-                        <dt>@resolved.Project.Name</dt>
+                        <dt>@resolved.Description</dt>
                         <dd>
                             @resolved.AssignedToUser.FirstName @resolved.AssignedToUser.LastName
                             <a href=@Url.Action("Details", "Tickets" , new { id=resolved.Id }) class="pull-right btn btn-warning btn-xs"><i class="fa fa-eye"></i></a>
                         </dd>
+                        <p>@resolved.Updated</p>
                     }
                 </div>
                 <!-- /.box-body -->

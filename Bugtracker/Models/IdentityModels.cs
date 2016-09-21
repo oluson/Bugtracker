@@ -69,5 +69,6 @@ namespace Bugtracker.Models
         public virtual DbSet<TicketStatuses> TicketStatus { get; set; }
         public virtual DbSet<TicketTypes> TicketType { get; set; }
         public IEnumerable ApplicationUsers { get; internal set; }
+        public IEnumerable TicketPriorities { get; internal set; }
     }
 }

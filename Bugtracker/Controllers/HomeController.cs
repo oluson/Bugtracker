@@ -7,14 +7,21 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Newtonsoft.Json;
 
+
+
 namespace Bugtracker.Controllers
 {
     public class HomeController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
        
-
         public ActionResult Index()
+        {
+            
+            return View();
+        }
+
+        public ActionResult Dashboard()
         {
             var userId = User.Identity.GetUserId();
             var tickets = new List<Tickets>();
